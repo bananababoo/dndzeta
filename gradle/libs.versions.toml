@@ -1,0 +1,16 @@
+[versions]
+paper = "1.21.1-R0.1-SNAPSHOT"
+mockbukkit = "v1.21-SNAPSHOT"
+kotlin = "2.0.21"
+mockk = "1.13.13"
+junit = "5.9.3"
+logback = "1.5.11"
+
+[libraries]
+paper-api = { module = "io.papermc.paper:paper-api", version.ref = "paper" }
+mockbukkit = { module = "com.github.MockBukkit:MockBukkit", version.ref = "mockbukkit" }
+kotlin-script-runtime = { module = "org.jetbrains.kotlin:kotlin-script-runtime", version.ref = "kotlin" }
+kotlin-stdlib = {module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }
+mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
+junit-bom = { module = "org.junit:junit-bom", version.ref = "junit" }
+logback = {module = "ch.qos.logback:logback-classic", version.ref = "logback"}

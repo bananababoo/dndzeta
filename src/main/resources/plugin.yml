@@ -1,0 +1,7 @@
+name: dnd-zeta
+version: '${version}'
+main: org.banana_inc.DndZeta
+api-version: '1.21'
+commands:
+  test:
+    description: test
