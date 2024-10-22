@@ -8,8 +8,6 @@ open class DndZeta : JavaPlugin() {
     override fun onEnable() {
         // Plugin startup logic
         getCommand("test")?.setExecutor(Commands.command1)
-
-
     }
 
     override fun onDisable() {
