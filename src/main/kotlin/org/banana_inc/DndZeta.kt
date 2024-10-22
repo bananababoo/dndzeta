@@ -1,13 +1,16 @@
 package org.banana_inc
 
+import com.zorbeytorunoglu.kLib.MCPlugin
 import org.banana_inc.commands.Commands
-import org.bukkit.plugin.java.JavaPlugin
 
-open class DndZeta : JavaPlugin() {
+open class DndZeta : MCPlugin() {
+
+    private lateinit var commands: Commands
 
     override fun onEnable() {
         // Plugin startup logic
-        getCommand("test")?.setExecutor(Commands.command1)
+        commands = Commands(this)
+        getCommand("test")?.setExecutor(commands.command1)
     }
 
     override fun onDisable() {
@@ -15,5 +18,4 @@ open class DndZeta : JavaPlugin() {
     }
 
     fun sum(a: Int, b: Int) = a + b
-
 }

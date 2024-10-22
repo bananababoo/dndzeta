@@ -22,9 +22,12 @@ dependencies {
     compileOnly(libs.paper.api)
     implementation(libs.kotlin.stdlib) // https://modrinth.com/plugin/ktlibs-kotlin-stdlib
     implementation(libs.kotlin.script.runtime)
+    implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.kLib)
     testImplementation(libs.mockbukkit)
     testImplementation(libs.mockk)
     testImplementation(libs.logback)
+
     testImplementation(kotlin("test"))
 }
 
