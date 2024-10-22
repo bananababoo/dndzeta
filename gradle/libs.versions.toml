@@ -5,12 +5,17 @@ kotlin = "2.0.21"
 mockk = "1.13.13"
 junit = "5.9.3"
 logback = "1.5.11"
+kotlinx = "1.9.0"
+kLib = "0.0.8"
+
 
 [libraries]
 paper-api = { module = "io.papermc.paper:paper-api", version.ref = "paper" }
 mockbukkit = { module = "com.github.MockBukkit:MockBukkit", version.ref = "mockbukkit" }
 kotlin-script-runtime = { module = "org.jetbrains.kotlin:kotlin-script-runtime", version.ref = "kotlin" }
 kotlin-stdlib = {module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }
+kotlinx-coroutines-core = {module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref ="kotlinx"}
 mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
 junit-bom = { module = "org.junit:junit-bom", version.ref = "junit" }
 logback = {module = "ch.qos.logback:logback-classic", version.ref = "logback"}
+kLib = {module = "com.github.zorbeytorunoglu:kLib", version.ref = "kLib"}
