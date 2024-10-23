@@ -7,6 +7,7 @@ junit = "5.9.3"
 logback = "1.5.11"
 kotlinx = "1.9.0"
 kLib = "0.0.8"
+acf = "v1.0.0"
 
 
 [libraries]
@@ -19,3 +20,4 @@ mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
 junit-bom = { module = "org.junit:junit-bom", version.ref = "junit" }
 logback = {module = "ch.qos.logback:logback-classic", version.ref = "logback"}
 kLib = {module = "com.github.zorbeytorunoglu:kLib", version.ref = "kLib"}
+acf-paper = { module = "com.github.bananababoo.acf:acf-paper", version.ref = "acf"}

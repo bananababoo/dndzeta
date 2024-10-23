@@ -1,16 +1,16 @@
 package org.banana_inc
 
+import co.aikar.commands.annotation.Dependency
 import com.zorbeytorunoglu.kLib.MCPlugin
-import org.banana_inc.commands.Commands
+import org.banana_inc.commands.CommandManagement
 
 open class DndZeta : MCPlugin() {
 
-    private lateinit var commands: Commands
 
     override fun onEnable() {
         // Plugin startup logic
-        commands = Commands(this)
-        getCommand("test")?.setExecutor(commands.command1)
+        CommandManagement.registerCommands(this)
+        instance = this
     }
 
     override fun onDisable() {
@@ -19,3 +19,6 @@ open class DndZeta : MCPlugin() {
 
     fun sum(a: Int, b: Int) = a + b
 }
+
+@Dependency
+lateinit var instance: DndZeta

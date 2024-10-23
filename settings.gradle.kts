@@ -9,3 +9,20 @@ plugins {
 }
 
 rootProject.name = "dnd-zeta"
+
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        mavenCentral()
+        maven("https://oss.sonatype.org/content/groups/public/") {
+            name = "sonatype"
+        }
+        maven("https://repo.papermc.io/repository/maven-public/") {
+            name = "papermc-repo"
+        }
+        maven("https://www.jitpack.io")
+
+    }
+}
+
+

@@ -1,22 +1,11 @@
 plugins {
     kotlin("jvm") version "2.0.21" // Replace with your actual Kotlin version
+    id("com.gradleup.shadow") version "8.3.0"
 }
 
 group = "me.bananababoo"
 version = "0.0.1"
 
-repositories {
-    mavenCentral()
-    maven("https://repo.papermc.io/repository/maven-public/") {
-        name = "papermc-repo"
-    }
-    maven("https://oss.sonatype.org/content/groups/public/") {
-        name = "sonatype"
-    }
-    maven("https://jitpack.io"){
-        name = "jitpack"
-    }
-}
 
 dependencies {
     compileOnly(libs.paper.api)
@@ -24,6 +13,7 @@ dependencies {
     implementation(libs.kotlin.script.runtime)
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kLib)
+    implementation(libs.acf.paper)
     testImplementation(libs.mockbukkit)
     testImplementation(libs.mockk)
     testImplementation(libs.logback)
@@ -37,13 +27,23 @@ java {
     toolchain.languageVersion.set(JavaLanguageVersion.of(targetJavaVersion))
 }
 
-tasks.withType<JavaCompile>().configureEach {
+kotlin {
+    compilerOptions {
+        javaParameters = true
+    }
+}
+
+tasks.compileJava {
     options.encoding = "UTF-8"
 
     if (targetJavaVersion >= 10 || JavaVersion.current().isJava10Compatible) {
         options.release.set(targetJavaVersion)
     }
+    options.compilerArgs.add("-parameters")
+    options.isFork = true
+    options.forkOptions.executable = "${System.getProperty("java.home")}/bin/javac.exe"
 }
+
 
 tasks.processResources {
     val props = mapOf("version" to version)
@@ -59,6 +59,15 @@ tasks.test {
     useJUnitPlatform()
 }
 
-tasks.jar {
+tasks.shadowJar {
     destinationDirectory = file(providers.gradleProperty("build.outputPath"))
+}
+
+tasks.shadowJar {
+    relocate("co.aikar.commands", "org.banana_inc.acf")
+    relocate("co.aikar.locales", "org.banana_inc.locales")
+}
+
+tasks.build {
+    dependsOn(tasks.shadowJar)
 }
