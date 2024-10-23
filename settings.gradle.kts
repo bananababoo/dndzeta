@@ -10,6 +10,7 @@ plugins {
 
 rootProject.name = "dnd-zeta"
 
+@Suppress("UnstableApiUsage")
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
