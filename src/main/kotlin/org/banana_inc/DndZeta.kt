@@ -1,16 +1,19 @@
 package org.banana_inc
 
 import co.aikar.commands.annotation.Dependency
-import com.zorbeytorunoglu.kLib.MCPlugin
 import org.banana_inc.commands.CommandManagement
+import org.bukkit.plugin.java.JavaPlugin
+import java.util.logging.Logger
 
-open class DndZeta : MCPlugin() {
+open class DndZeta : JavaPlugin() {
 
 
     override fun onEnable() {
+        plugin = this
+        org.banana_inc.logger = logger
+
         // Plugin startup logic
         CommandManagement.registerCommands(this)
-        instance = this
     }
 
     override fun onDisable() {
@@ -21,4 +24,7 @@ open class DndZeta : MCPlugin() {
 }
 
 @Dependency
-lateinit var instance: DndZeta
+lateinit var plugin: DndZeta
+lateinit var logger: Logger
+
+

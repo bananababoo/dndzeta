@@ -1,6 +1,7 @@
 plugins {
     kotlin("jvm") version "2.0.21" // Replace with your actual Kotlin version
-    id("com.gradleup.shadow") version "8.3.0"
+    id("com.gradleup.shadow") version "8.3.3"
+    id("com.github.ben-manes.versions") version "0.51.0"
 }
 
 group = "me.bananababoo"
@@ -14,6 +15,9 @@ dependencies {
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kLib)
     implementation(libs.acf.paper)
+    implementation(libs.mongo.driver)
+    implementation(libs.mongo.bson)
+
     testImplementation(libs.mockbukkit)
     testImplementation(libs.mockk)
     testImplementation(libs.logback)
