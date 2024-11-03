@@ -1,0 +1,7 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Run" type="CompoundRunConfigurationType">
+    <toRun name="setup" type="BatchConfigurationType" />
+    <toRun name="Build" type="JarApplication" />
+    <method v="2" />
+  </configuration>
+</component>

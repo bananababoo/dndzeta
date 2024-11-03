@@ -22,8 +22,6 @@ dependencyResolutionManagement {
             name = "papermc-repo"
         }
         maven("https://www.jitpack.io")
-
+        maven("https://oss.sonatype.org/content/repositories/snapshots/")
     }
 }
-
-

@@ -1,22 +1,32 @@
 plugins {
-    kotlin("jvm") version "2.0.21" // Replace with your actual Kotlin version
-    id("com.gradleup.shadow") version "8.3.3"
+    kotlin("jvm") version "2.1.0-Beta2" // Replace with your actual Kotlin version
+    id("com.gradleup.shadow") version "8.3.5"
+    id("com.github.gmazzo.buildconfig") version "5.5.0"
     id("com.github.ben-manes.versions") version "0.51.0"
+    id("nl.littlerobots.version-catalog-update") version "0.8.5"
+
+
 }
 
 group = "me.bananababoo"
 version = "0.0.1"
 
-
 dependencies {
     compileOnly(libs.paper.api)
+
+    implementation(libs.acf.paper)
+
     implementation(libs.kotlin.stdlib) // https://modrinth.com/plugin/ktlibs-kotlin-stdlib
     implementation(libs.kotlin.script.runtime)
+    implementation(libs.kotlin.reflect)
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kLib)
-    implementation(libs.acf.paper)
-    implementation(libs.mongo.driver)
+
     implementation(libs.mongo.bson)
+    implementation(libs.jackson)
+    implementation(libs.joml)
+    implementation(libs.mongo.jackdriver)
+    implementation(libs.kmongo)
 
     testImplementation(libs.mockbukkit)
     testImplementation(libs.mockk)
@@ -24,6 +34,8 @@ dependencies {
 
     testImplementation(kotlin("test"))
 }
+
+
 
 val targetJavaVersion = 21
 
@@ -36,6 +48,7 @@ kotlin {
         javaParameters = true
     }
 }
+
 
 tasks.compileJava {
     options.encoding = "UTF-8"
@@ -75,3 +88,10 @@ tasks.shadowJar {
 tasks.build {
     dependsOn(tasks.shadowJar)
 }
+
+buildConfig {
+    buildConfigField("databasePassword", providers.gradleProperty("database.password"))
+}
+
+
+

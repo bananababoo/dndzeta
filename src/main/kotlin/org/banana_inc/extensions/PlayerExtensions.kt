@@ -6,6 +6,8 @@ import com.zorbeytorunoglu.kLib.task.Scopes
 import io.papermc.paper.ban.BanListType
 import kotlinx.coroutines.launch
 import net.kyori.adventure.text.TextComponent
+import org.banana_inc.data.Data
+import org.banana_inc.data.Database
 import org.bukkit.*
 import org.bukkit.block.Block
 import org.bukkit.command.CommandSender
@@ -18,16 +20,15 @@ import java.util.*
 
 /**
  * Checks if the player is in the cuboid region that is formed by the two given locations.
- * @param playerLocation Location of the player.
  * @param location1 First location
  * @param location2 Second location
  * @return True if the player is in the cuboid, false if not.
  */
-fun Player.isInside(playerLocation: Location, location1: Location, location2: Location): Boolean {
+fun Player.isInside(location1: Location, location2: Location): Boolean {
 
     val cuboid = Cuboid(location1, location2)
 
-    return cuboid.isIn(playerLocation)
+    return cuboid.isIn(location)
 
 }
 
@@ -36,7 +37,7 @@ fun Player.isInside(playerLocation: Location, location1: Location, location2: Lo
  * @return Boolean: True if there is no empty slot, false if there is.
  */
 fun Player.isInventoryFull(): Boolean {
-    return this.inventory.firstEmpty() == -1;
+    return this.inventory.firstEmpty() == -1
 }
 
 /**
@@ -232,6 +233,10 @@ fun Player.kill() {
 }
 
 fun Player.ejectPassengers() {
-    vehicle?.eject();
-    eject();
+    vehicle?.eject()
+    eject()
+}
+
+fun Player.data(): Data.Player {
+    return Database.players[this]!!
 }

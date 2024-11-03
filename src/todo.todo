@@ -1,0 +1,17 @@
+- re think scheduler stuff
+
+event tracker thingy:
+- takes in mutable list of players and type parameter <T: Event>
+- runs function every time event is called
+
+  - requires being able to register to events at runtime (technically possible...)
+  https://www.spigotmc.org/threads/register-event-handler-dynamically.424119/
+  https://github.com/classgraph/classgraph
+
+gui system
+
+particle recievers optimization:
+- how often do we re-check for new players in particle spawnning system
+- paper scheduler optimization... https://discord.com/channels/289587909051416579/555462289851940864/1302461135194165339
+  - don't use paper radius for recipients on particles
+  - its async if you don't use receiver(double radius)

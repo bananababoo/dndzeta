@@ -1,31 +1,31 @@
 [versions]
-paper = "1.21.1-R0.1-SNAPSHOT"
-mockbukkit = "v1.21-SNAPSHOT"
-kotlin = "2.1.0-Beta2"
-mockk = "1.13.13"
-junit = "5.9.3"
-logback = "1.5.11"
-kotlinx = "1.9.0"
+acf = "1.0.0"
+jackson = "2.18.1"
+joml = "1.10.8"
 kLib = "0.0.8"
-acf = "v1.0.0"
-mongodb = "5.2.0"
-
+kmongo = "5.1.0"
+kotlin = "2.1.0-Beta2"
+kotlinx = "1.9.0"
+logback = "1.5.12"
+mockbukkit = "3.133.2"
+mockk = "1.13.13"
+mongodb = "5.3.0-beta0"
+mongojack = "5.0.2"
+paper = "1.21.3-R0.1-SNAPSHOT"
 
 [libraries]
-paper-api = { module = "io.papermc.paper:paper-api", version.ref = "paper" }
-
+acf-paper = { module = "com.github.bananababoo.acf:acf-paper", version.ref = "acf" }
+jackson = { module = "com.fasterxml.jackson.core:jackson-core", version.ref = "jackson" }
+joml = { module = "org.joml:joml", version.ref = "joml" }
+kLib = { module = "com.github.zorbeytorunoglu:kLib", version.ref = "kLib" }
+kmongo = { module = "org.litote.kmongo:kmongo", version.ref = "kmongo" }
+kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin" }
+kotlin-script-runtime = { module = "org.jetbrains.kotlin:kotlin-script-runtime", version.ref = "kotlin" }
+kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }
+kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx" }
+logback = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
 mockbukkit = { module = "com.github.MockBukkit:MockBukkit", version.ref = "mockbukkit" }
 mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
-junit-bom = { module = "org.junit:junit-bom", version.ref = "junit" }
-
-kotlin-script-runtime = { module = "org.jetbrains.kotlin:kotlin-script-runtime", version.ref = "kotlin" }
-kotlin-stdlib = {module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }
-kotlinx-coroutines-core = {module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref ="kotlinx"}
-kLib = {module = "com.github.zorbeytorunoglu:kLib", version.ref = "kLib"}
-
-logback = {module = "ch.qos.logback:logback-classic", version.ref = "logback"}
-
-acf-paper = { module = "com.github.bananababoo.acf:acf-paper", version.ref = "acf"}
-
-mongo-driver = { module = "org.mongodb:mongodb-driver-kotlin-coroutine", version.ref = "mongodb"}
 mongo-bson = { module = "org.mongodb:bson-kotlinx", version.ref = "mongodb" }
+mongo-jackdriver = { module = "org.mongojack:mongojack", version.ref = "mongojack" }
+paper-api = { module = "io.papermc.paper:paper-api", version.ref = "paper" }

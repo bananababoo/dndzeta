@@ -58,7 +58,9 @@ suspend fun <T> JavaPlugin.suspendFunctionWithResult(async: Boolean, function: (
 
 }
 
-fun JavaPlugin.delay(function: () -> Unit, seconds: Int): BukkitTask {
+
+
+fun JavaPlugin.delaySync(function: () -> Unit, seconds: Int): BukkitTask {
 
     return this.server.scheduler.runTaskLater(this, Runnable {
         function()
@@ -66,13 +68,14 @@ fun JavaPlugin.delay(function: () -> Unit, seconds: Int): BukkitTask {
 
 }
 
-fun JavaPlugin.delay(function: () -> Unit, millis: Long): BukkitTask {
+fun JavaPlugin.delayync(function: () -> Unit, millis: Long): BukkitTask {
 
     return this.server.scheduler.runTaskLater(this, Runnable {
         function()
     }, millis)
 
 }
+
 
 fun JavaPlugin.delayAsync(function: () -> Unit, seconds: Int): BukkitTask {
 
@@ -84,72 +87,12 @@ fun JavaPlugin.delayAsync(function: () -> Unit, seconds: Int): BukkitTask {
 
 fun JavaPlugin.delayAsync(function: () -> Unit, millis: Long): BukkitTask {
 
-    return this.server.scheduler.runTaskLaterAsynchronously(this, Runnable {
-        function()
-    }, millis)
-
-}
-
-fun JavaPlugin.repeat(function: () -> Unit, seconds: Int): BukkitTask {
-
     return this.server.scheduler.runTaskTimer(this, Runnable {
         function()
-    }, 0L, seconds * 20L)
+    }, millis,2)
 
 }
 
-fun JavaPlugin.repeat(function: () -> Unit, millis: Long): BukkitTask {
 
-    return this.server.scheduler.runTaskTimer(this, Runnable {
-        function()
-    }, 0L, millis)
 
-}
 
-fun JavaPlugin.repeat(function: () -> Unit, delay: Int, period: Int): BukkitTask {
-
-    return this.server.scheduler.runTaskTimer(this, Runnable {
-        function()
-    }, delay*20L, period * 20L)
-
-}
-
-fun JavaPlugin.repeat(function: () -> Unit, delay: Long, period: Long): BukkitTask {
-
-    return this.server.scheduler.runTaskTimer(this, Runnable {
-        function()
-    }, delay, period)
-
-}
-
-fun JavaPlugin.repeatAsync(function: () -> Unit, seconds: Int): BukkitTask {
-
-    return this.server.scheduler.runTaskTimerAsynchronously(this, Runnable {
-        function()
-    }, 0L, seconds * 20L)
-
-}
-
-fun JavaPlugin.repeatAsync(function: () -> Unit, millis: Long): BukkitTask {
-
-    return this.server.scheduler.runTaskTimerAsynchronously(this, Runnable {
-        function()
-    }, 0L, millis)
-
-}
-
-fun JavaPlugin.repeatAsync(function: () -> Unit, delay: Int, period: Int): BukkitTask {
-
-    return this.server.scheduler.runTaskTimerAsynchronously(this, Runnable {
-        function()
-    }, delay*20L, period * 20L)
-
-}
-
-fun JavaPlugin.repeatAsync(function: () -> Unit, delay: Long, period: Long): BukkitTask {
-
-    return this.server.scheduler.runTaskTimerAsynchronously(this, Runnable {
-        function()
-    }, delay, period)
-
-}
