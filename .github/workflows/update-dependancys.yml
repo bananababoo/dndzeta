@@ -17,7 +17,10 @@ jobs:
         uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
-          java-version: '21'  # Updated to Java 21
+          java-version: '21'  # Using Java 21
+
+      - name: Grant execute permission for Gradlew
+        run: chmod +x ./gradlew
 
       - name: Run Gradle versionCatalogUpdate
         run: ./gradlew versionCatalogUpdate
