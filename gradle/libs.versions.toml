@@ -17,8 +17,8 @@ paper = "1.21.3-R0.1-SNAPSHOT"
 
 [libraries]
 acf-paper = { module = "com.github.bananababoo.acf:acf-paper", version.ref = "acf" }
-classgraph = { module = "io.github.classgraph:classgraph", version.ref = "classgraph"}
-guava = { module = "com.google.guava:guava", version.ref = "guava"}
+classgraph = { module = "io.github.classgraph:classgraph", version.ref = "classgraph" }
+guava = { module = "com.google.guava:guava", version.ref = "guava" }
 jackson = { module = "com.fasterxml.jackson.core:jackson-core", version.ref = "jackson" }
 joml = { module = "org.joml:joml", version.ref = "joml" }
 kLib = { module = "com.github.zorbeytorunoglu:kLib", version.ref = "kLib" }
