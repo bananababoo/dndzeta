@@ -5,7 +5,6 @@ on:
   push:
     branches: # Specify your branches here
       - main # The 'main' branch
-      - master # The 'master' branch
       - 'releases/*' # The release branches
 
 jobs:
@@ -20,14 +19,10 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.sha }}  # to check out the actual pull request commit, not the merge commit
           fetch-depth: 0  # a full history is required for pull request analysis
-      - name: Qodana Scan
+      - name: 'Qodana Scan'
         uses: JetBrains/qodana-action@v2024.2
         with:
           pr-mode: false
-          args: --apply-fixes
-          push-fixes: pull-request
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - uses: github/codeql-action/upload-sarif@v2
-        with:
-          sarif_file: ${{ runner.temp }}/qodana/results/qodana.sarif.json
+          QODANA_TOKEN: ${{ secrets.QODANA_TOKEN_1055951048 }}
+          QODANA_ENDPOINT: 'https://qodana.cloud'
