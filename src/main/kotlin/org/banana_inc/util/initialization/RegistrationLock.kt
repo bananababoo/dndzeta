@@ -12,4 +12,9 @@ object RegistrationLock {
         check(obj !in locks)
         locks.add(obj)
     }
+
+    fun isRegistered(obj: Any): Boolean{
+        return obj !in locks
+    }
+
 }

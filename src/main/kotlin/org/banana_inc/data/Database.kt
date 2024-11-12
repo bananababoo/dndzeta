@@ -2,6 +2,8 @@ package org.banana_inc.data
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
+import com.fasterxml.jackson.module.kotlin.KotlinFeature
+import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.mongodb.ConnectionString
 import com.mongodb.MongoClientSettings
 import com.mongodb.ServerApi
@@ -9,100 +11,112 @@ import com.mongodb.ServerApiVersion
 import com.mongodb.client.MongoClient
 import com.mongodb.client.MongoClients
 import com.mongodb.client.MongoDatabase
+import com.mongodb.client.model.changestream.ChangeStreamDocument
+import com.mongodb.client.model.changestream.FullDocument
 import com.mongodb.client.model.changestream.OperationType
 import com.zorbeytorunoglu.kLib.task.Scopes
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import me.bananababoo.dnd_zeta.BuildConfig
-import org.banana_inc.util.initialization.RegistrationLock
+import org.banana_inc.logger
+import org.banana_inc.util.initialization.InitOnStartup
 import org.bson.Document
 import org.bson.UuidRepresentation
-import org.bukkit.entity.Player
 import org.mongojack.JacksonMongoCollection
 import kotlin.reflect.KClass
+import kotlin.reflect.full.declaredMemberFunctions
+import kotlin.reflect.full.declaredMemberProperties
+import kotlin.reflect.full.findAnnotation
+import kotlin.reflect.full.hasAnnotation
 
-
+@InitOnStartup
 object Database {
-    lateinit var client: MongoClient
-    lateinit var database: MongoDatabase
-    var players: Map<Player, Data.Player> = mutableMapOf()
-    var items: List<Data.Item> = mutableListOf()
+    private var client: MongoClient
+    var database: MongoDatabase
     val objectMapper = ObjectMapper().apply {
-        registerModule(JavaTimeModule()) // Register the module for handling UUID and other types
+        registerModule(JavaTimeModule())
+        registerModule(KotlinModule.Builder().enable(KotlinFeature.StrictNullChecks).build())
     }
 
-    fun init() {
-        RegistrationLock.register(this)
-        val connectionString =
-            "mongodb+srv://banana:${BuildConfig.databasePassword}@cluster0.j6wxz.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
-        val serverApi = ServerApi.builder()
-            .version(ServerApiVersion.V1)
-            .build()
+    init {
+        val connectionString = "mongodb+srv://banana:${BuildConfig.databasePassword}@cluster0.j6wxz.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
         val mongoClientSettings = MongoClientSettings.builder()
             .applyConnectionString(ConnectionString(connectionString))
-            .serverApi(serverApi)
+            .uuidRepresentation(UuidRepresentation.STANDARD)
+            .serverApi(ServerApi.builder().version(ServerApiVersion.V1).build())
             .build()
         client = MongoClients.create(mongoClientSettings)
         database = client.getDatabase("dnd_zeta")
-        // Check connection (ping MongoDB)
-        runBlocking {
-            database.runCommand(Document("ping", 1)).run {
-                if(this.getInteger("ok") == 0){
-                    postInit()
+
+        val result = database.runCommand(Document("ping", 1))
+        logger.info("1 $result")
+        if (result.getInteger("ok") == 1) {
+            logger.info("2")
+            postInit()
+        }
+    }
+
+    private fun postInit() {
+        DatabaseActions.loadAll()
+        val session = client.startSession()
+
+        Data.serverDataLists.keys.forEach { serverDataList ->
+            val col = getCollection(serverDataList)
+            val insertChanges = serverDataList.hasAnnotation<Data.LoadOnStartup>()
+            Scopes.ioScope.launch {
+                val changeStream = col.watch(session).fullDocument(FullDocument.UPDATE_LOOKUP)
+                changeStream.forEach { change ->
+                    checkNotNull(change.fullDocument)
+                    logger.info("change: ${change.fullDocument}")
+                    handleOperation(change, insertChanges, serverDataList)
                 }
             }
         }
-
     }
-    private fun postInit(){
-        DataActions.loadAllData()
-        for (serverDataList in ServerData.serverDataLists) {
-            val list = serverDataList.value.list
-            val col = getCollection(serverDataList.key)
-            Scopes.ioScope.launch {
-                val changeStream = col.watch()
-                changeStream.forEach(){ change ->
-                    checkNotNull(change.fullDocument)
-                    when(change.operationType){
-                        OperationType.INSERT -> list.add(change.fullDocument)
-                        OperationType.UPDATE,OperationType.REPLACE  -> list[list.indexOfFirst{old -> old.id == change.fullDocument.id }] = change.fullDocument
-                        OperationType.DELETE -> list.remove(change.fullDocument)
-                        else -> return@forEach
-                    }
-                    println("Received a change event: $change")
+
+    private fun handleOperation(change: ChangeStreamDocument<out Data>, insertChanges: Boolean, serverDataList: KClass<out Data>) {
+        val list = Data.serverDataLists[serverDataList]!!
+        val doc: Data = change.fullDocument ?: return
+        when (change.operationType) {
+            OperationType.INSERT -> if (insertChanges) list.add(change.fullDocument)
+            OperationType.UPDATE, OperationType.REPLACE -> {
+                list.find { it.uuid == doc.uuid }?.let {
+                    list.remove(it)
+                    list.add(doc)
+                    callEvents(doc, serverDataList)
                 }
             }
+            OperationType.DELETE -> list.remove(change.fullDocument)
+            else -> {}
+        }
+        println("Received a change event: $change")
+    }
 
+    private fun callEvents(data: Data, dataClass: KClass<out Data>){
+        for(function in dataClass.declaredMemberFunctions){
+            if(function.hasAnnotation<DatabaseUpdateHandler>()){
+                val updateHandler = function.findAnnotation<DatabaseUpdateHandler>()!!
+                val property = dataClass.declaredMemberProperties.find { it.name == updateHandler.propertyName }!!
+                val propertyValue = property.getter.call(data)
+                function.call(data, propertyValue)
+            }
         }
     }
 
     inline fun <reified T : Data> getCollection(): JacksonMongoCollection<T> {
-        val name: String = requireNotNull(T::class.simpleName)
         return JacksonMongoCollection.builder()
             .withObjectMapper(objectMapper)
-            .build(database, name, T::class.java,UuidRepresentation.STANDARD)!!
+            .build(database, T::class.simpleName!!, T::class.java, UuidRepresentation.STANDARD)!!
     }
 
     inline fun <reified T : Data> getCollection(obj: T): JacksonMongoCollection<T> {
-        val name: String = requireNotNull(obj::class.simpleName)
         return JacksonMongoCollection.builder()
             .withObjectMapper(objectMapper)
-            .build(database, name,T::class.java,UuidRepresentation.STANDARD)
+            .build(database, obj::class.simpleName!!, T::class.java, UuidRepresentation.STANDARD)
     }
 
     fun <T : Data> getCollection(obj: KClass<T>): JacksonMongoCollection<T> {
-        val name: String = requireNotNull(obj.simpleName)
         return JacksonMongoCollection.builder()
             .withObjectMapper(objectMapper)
-            .build(database, name,obj.java,UuidRepresentation.STANDARD)
+            .build(database, obj.simpleName!!, obj.java, UuidRepresentation.STANDARD)
     }
-
-
 }
-
-
-
-
-
-
-

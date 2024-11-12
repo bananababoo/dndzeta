@@ -5,7 +5,6 @@ plugins {
     id("com.github.ben-manes.versions") version "0.51.0"
     id("nl.littlerobots.version-catalog-update") version "0.8.5"
 
-
 }
 
 group = "me.bananababoo"
@@ -18,12 +17,16 @@ dependencies {
 
     implementation(libs.kotlin.stdlib) // https://modrinth.com/plugin/ktlibs-kotlin-stdlib
     implementation(libs.kotlin.script.runtime)
-    implementation(libs.kotlin.reflect)
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kLib)
+    implementation(libs.kotlin.reflect)
+    implementation(libs.classgraph)
+
+    implementation(libs.guava)
 
     implementation(libs.mongo.bson)
     implementation(libs.jackson)
+
     implementation(libs.joml)
     implementation(libs.mongo.jackdriver)
     implementation(libs.kmongo)
@@ -31,6 +34,9 @@ dependencies {
     testImplementation(libs.mockbukkit)
     testImplementation(libs.mockk)
     testImplementation(libs.logback)
+
+    implementation("com.github.SteveTheEngineer.SS-GuiLibrary:guilib-api:0.0.0-mc1.18.2")
+
 
     testImplementation(kotlin("test"))
 }
@@ -90,7 +96,7 @@ tasks.build {
 }
 
 buildConfig {
-    buildConfigField("databasePassword", providers.gradleProperty("database.password"))
+    buildConfigField("databasePassword", "baboo158")
 }
 
 

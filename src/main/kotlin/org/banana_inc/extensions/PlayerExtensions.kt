@@ -7,7 +7,7 @@ import io.papermc.paper.ban.BanListType
 import kotlinx.coroutines.launch
 import net.kyori.adventure.text.TextComponent
 import org.banana_inc.data.Data
-import org.banana_inc.data.Database
+import org.banana_inc.data.DatabaseActions
 import org.bukkit.*
 import org.bukkit.block.Block
 import org.bukkit.command.CommandSender
@@ -237,6 +237,9 @@ fun Player.ejectPassengers() {
     eject()
 }
 
-fun Player.data(): Data.Player {
-    return Database.players[this]!!
-}
+
+val Player.data: Data.Player
+    get() {
+        val playerData = Data.get<Data.Player>().find { it.uuid == uniqueId }
+        return playerData ?: Data.Player(uniqueId).apply { DatabaseActions.store(this) }
+    }

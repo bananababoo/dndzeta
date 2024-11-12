@@ -8,7 +8,7 @@ class RepeatRunnable(private val repeat: Repeat, private val function: (RepeatRu
     private var progress: Double = 0.0
 
     override fun run() {
-        if(progress>=repeat.duration && repeat.duration != -1L) cancel()
+        if(progress>=repeat.duration && repeat.duration != -1L) repeat.task.cancel()
         function(this)
         progress += repeat.period
     }

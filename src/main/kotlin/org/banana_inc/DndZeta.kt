@@ -1,19 +1,19 @@
 package org.banana_inc
 
 import co.aikar.commands.annotation.Dependency
-import org.banana_inc.commands.CommandManagement
-import org.banana_inc.data.Database
+import org.banana_inc.util.reflection.ClassGraph
 import org.bukkit.plugin.java.JavaPlugin
 import java.util.logging.Logger
 
 open class DndZeta : JavaPlugin() {
 
-
     override fun onEnable() {
         plugin = this
         org.banana_inc.logger = logger
-        Database.init()
-        CommandManagement.registerCommands(this)
+        for (initOnStartupClass in ClassGraph.getInitOnStartupClasses()) {
+            initOnStartupClass.kotlin.objectInstance
+            logger.info("initing: ${initOnStartupClass.simpleName}")
+        }
     }
 
     override fun onDisable() {

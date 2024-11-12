@@ -59,6 +59,13 @@ suspend fun <T> JavaPlugin.suspendFunctionWithResult(async: Boolean, function: (
 }
 
 
+fun JavaPlugin.sync(function: () -> Unit): BukkitTask {
+    return this.server.scheduler.runTaskLater(this, Runnable {
+        function()
+    },0L)
+
+}
+
 
 fun JavaPlugin.delaySync(function: () -> Unit, seconds: Int): BukkitTask {
 

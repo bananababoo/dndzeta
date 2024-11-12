@@ -40,7 +40,6 @@ fun ItemStack.removeAmount(player: Player, amount: Int) {
 /**
  * Sets the lore of the item stack from string vararg and colors them.
  * @param lore String vararg
- * @param color Should color the strings
  */
 fun ItemStack.setLore(vararg lore: String) {
 
@@ -91,12 +90,12 @@ fun ItemStack.addLore(vararg lore: Component?) {
  * Adds the string list to the current lore.
  * @param lore String list
  */
-fun ItemStack.addLore(lore: List<String>) {
+fun ItemStack.addLore(lore: List<Component>) {
 
     val meta = (if (this.hasItemMeta()) this.itemMeta else Bukkit.getItemFactory().getItemMeta(this.type))!!
     var loreList = meta.lore()
 
-    if (loreList == null) loreList = lore() else lore()?.let { loreList.addAll(it) }
+    if (loreList == null) loreList = lore() else lore()?.let { loreList.addAll(lore) }
 
     meta.lore(loreList)
     this.itemMeta = meta
@@ -122,16 +121,6 @@ fun ItemStack.clearEnchantments() {
     for (enchantment in meta.enchants.keys) {
         meta.removeEnchant(enchantment)
     }
-    this.itemMeta = meta
-}
-
-/**
- * Clears a specific enchantment from the item stack.
- * @param enchantment Enchantment
- */
-fun ItemStack.removeEnchantment(enchantment: Enchantment) {
-    val meta = (if (this.hasItemMeta()) this.itemMeta else Bukkit.getItemFactory().getItemMeta(this.type))!!
-    meta.removeEnchant(enchantment)
     this.itemMeta = meta
 }
 

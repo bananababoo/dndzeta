@@ -1,16 +1,15 @@
 package org.banana_inc.commands
 
 import co.aikar.commands.PaperCommandManager
-import org.banana_inc.DndZeta
-import org.banana_inc.util.initialization.RegistrationLock
+import org.banana_inc.plugin
+import org.banana_inc.util.initialization.InitOnStartup
 
+@InitOnStartup
 object CommandManagement{
 
-    private lateinit var manager: PaperCommandManager
+    private var manager: PaperCommandManager = PaperCommandManager(plugin)
 
-    fun registerCommands(plugin: DndZeta) {
-        RegistrationLock.register(this)
-        manager = PaperCommandManager(plugin)
+    init {
         manager.registerCommand(Command())
     }
 

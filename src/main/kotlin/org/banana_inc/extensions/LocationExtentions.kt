@@ -1,6 +1,8 @@
 package org.banana_inc.extensions
 
+import org.bukkit.Bukkit
 import org.bukkit.Location
+import org.bukkit.entity.Player
 import org.bukkit.util.Vector
 
 /**
@@ -21,4 +23,15 @@ fun Location.relativeOffset(x: Double = 0.0, y: Double = 0.0, z: Double = 0.0): 
     val upward = right.clone().crossProduct(direction).normalize()
 
     return this.add(direction.multiply(z)).add(upward.multiply(y)).add(right.multiply(x))
+}
+
+fun Location.asyncNearbyPlayers(radius: Long): List<Player> {
+    val radiusSquared = radius * radius
+    val list = mutableListOf<Player>()
+    for (player in Bukkit.getOnlinePlayers()) {
+        if (distanceSquared(player.location) < radiusSquared) {
+            list.add(player)
+        }
+    }
+    return list
 }

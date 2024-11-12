@@ -33,5 +33,4 @@ curl -o server.jar %DOWNLOAD_URL%
 echo Download complete: server.jar
 
 if defined PATH_NOT_EXIST (
-    echo eula=true > eula.txt
-)
+    echo eula=true> eula.txt)
