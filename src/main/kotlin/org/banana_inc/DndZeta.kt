@@ -9,10 +9,10 @@ open class DndZeta : JavaPlugin() {
 
     override fun onEnable() {
         plugin = this
+        @SuppressWarnings("redundantQualifier")
         org.banana_inc.logger = logger
-        for (initOnStartupClass in ClassGraph.getInitOnStartupClasses()) {
-            initOnStartupClass.kotlin.objectInstance
-            logger.info("initing: ${initOnStartupClass.simpleName}")
+        for (initOnStartupClass in ClassGraph.initOnStartupClasses) {
+            initOnStartupClass.objectInstance
         }
     }
 

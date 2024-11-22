@@ -1,36 +1,77 @@
 package org.banana_inc
 
+import io.papermc.paper.event.player.AsyncChatEvent
+import net.kyori.adventure.text.TextComponent
+import org.banana_inc.extensions.resolve
 import org.banana_inc.util.reflection.ClassGraph
+import org.bukkit.event.Cancellable
 import org.bukkit.event.Event
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
+import org.bukkit.event.player.PlayerAdvancementDoneEvent
+import org.bukkit.event.player.PlayerLoginEvent
 import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.CopyOnWriteArraySet
 import kotlin.reflect.KClass
 
 object EventManager: Listener {
 
     @PublishedApi
-    internal var map: ConcurrentHashMap<KClass<out Event>, MutableSet<(Event) -> Unit>> = ConcurrentHashMap()
+    internal var events: ConcurrentHashMap<KClass<out Event>, CopyOnWriteArraySet<(Event) -> Unit>> = ConcurrentHashMap()
 
+    private val canceledEvents: Set<KClass<out Event>> = setOf(
+        PlayerLoginEvent::class,
+        PlayerAdvancementDoneEvent::class //temp until further system made
+    ).filter { it.java.isAssignableFrom(Cancellable::class.java) }  // Filter only Cancellable events
+    .toSet()
     init {
         val pm = plugin.server.pluginManager
-        for(i in ClassGraph.getAllBukkitEventClasses()){
+        for(i in ClassGraph.allBukkitEventClasses){
             pm.registerEvent(i,this, EventPriority.HIGH, { _, event ->
+                if (event is Cancellable && canceledEvents.contains(event::class))
+                    event.isCancelled = true
                 handleEvent(event)
             }, plugin)
         }
     }
 
+
+    /**
+     * returns a reference to itself
+     */
+    inline fun <reified T : Event> addListenerWithSelfReference(noinline action: (T, (Event) -> Unit) -> Unit) {
+        lateinit var reference: (Event) -> Unit
+        reference = { event ->
+            action(event as T, reference)
+        }
+        events.compute(T::class) { _, existingActions ->
+            (existingActions ?: CopyOnWriteArraySet()).apply { add(reference) }
+        }
+    }
+
     inline fun <reified T : Event> addListener(noinline action: (T) -> Unit) {
-        map.compute(T::class) { _, existingActions ->
-            existingActions
-                ?.apply { add { action(it as T) } }
-                ?: mutableSetOf<(Event) -> Unit>().also { it -> it.add { action(it as T) } }
+        events.compute(T::class) { _, existingActions ->
+            (existingActions ?: CopyOnWriteArraySet<(Event) -> Unit>()).apply { add{ action(it as T) } }
+        }
+    }
+
+
+    inline fun <reified T : Event> callback(crossinline action: (T) -> Unit) {
+        val callback: (T,(Event) -> Unit) -> Unit = { it, reference ->
+            action(it)
+            logger.info(events[T::class]!!.remove(reference).toString())
+        }
+        addListenerWithSelfReference<T>(callback)
+    }
+
+    inline fun <reified T : Any> chatCallback(crossinline action: (T) -> Unit ){
+        callback<AsyncChatEvent> {
+            action((it.message() as TextComponent).content().resolve<T>())
         }
     }
 
     private fun handleEvent(event: Event) {
-        val handlers = map[event::class]
+        val handlers = events[event::class]
         for (handler in handlers?: return) {
             handler(event)
         }

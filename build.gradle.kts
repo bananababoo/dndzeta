@@ -14,6 +14,7 @@ dependencies {
     compileOnly(libs.paper.api)
 
     implementation(libs.acf.paper)
+    implementation("net.kyori:adventure-extra-kotlin:4.17.0")
 
     implementation(libs.kotlin.stdlib) // https://modrinth.com/plugin/ktlibs-kotlin-stdlib
     implementation(libs.kotlin.script.runtime)
@@ -35,12 +36,17 @@ dependencies {
     testImplementation(libs.mockk)
     testImplementation(libs.logback)
 
-    implementation("com.github.SteveTheEngineer.SS-GuiLibrary:guilib-api:0.0.0-mc1.18.2")
+    implementation("xyz.xenondevs.invui:invui:1.41")
+    implementation("xyz.xenondevs.invui:invui-kotlin:1.41")
 
+    implementation("team.unnamed:creative-api:1.7.3")
+    implementation("team.unnamed:creative-serializer-minecraft:1.7.3")
+    implementation("team.unnamed:creative-server:1.7.3")
+
+    implementation("net.bytebuddy:byte-buddy:1.15.10")
 
     testImplementation(kotlin("test"))
 }
-
 
 
 val targetJavaVersion = 21
@@ -89,6 +95,7 @@ tasks.shadowJar {
 tasks.shadowJar {
     relocate("co.aikar.commands", "org.banana_inc.acf")
     relocate("co.aikar.locales", "org.banana_inc.locales")
+    relocate("ink.pmc.advkt", "com.example.libs.advkt")
 }
 
 tasks.build {
@@ -96,7 +103,7 @@ tasks.build {
 }
 
 buildConfig {
-    buildConfigField("databasePassword", "baboo158")
+    buildConfigField("databasePassword", providers.gradleProperty("database.password"))
 }
 
 

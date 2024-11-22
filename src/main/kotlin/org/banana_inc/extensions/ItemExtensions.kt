@@ -46,7 +46,7 @@ fun ItemStack.setLore(vararg lore: String) {
     val meta = (if (this.hasItemMeta()) this.itemMeta else Bukkit.getItemFactory().getItemMeta(this.type))
 
     val colored = ArrayList<Component>()
-    lore.forEach { colored.add(it.minimessage) }
+    lore.forEach { colored.add(it.component) }
     meta.lore(colored)
 
     this.itemMeta = meta

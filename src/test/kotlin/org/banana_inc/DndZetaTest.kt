@@ -28,7 +28,7 @@ class DndZetaTest{
     }
 
     @Test
-    fun testSum(){
+    fun testStartup(){
         val sample = mockk<DndZeta>()
         every { sample.sum(1,4) } returns 5
         sample.sum(1,4)

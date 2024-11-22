@@ -1,8 +1,10 @@
 package org.banana_inc.extensions
 
 import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.event.ClickEvent
 import net.kyori.adventure.text.minimessage.MiniMessage
 import org.apache.maven.artifact.versioning.ComparableVersion
+import org.banana_inc.util.ContextResolver
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import java.security.MessageDigest
@@ -12,9 +14,14 @@ import java.util.*
 import java.util.regex.Pattern
 
 
-val String.minimessage get(): Component {
+val String.component get(): Component {
     return MiniMessage.miniMessage().deserialize(this)
 }
+
+fun String.clickableComponent(onClick: () -> Unit): Component {
+    return this.component.clickEvent(ClickEvent.callback { onClick() })
+}
+
 
 /**
  * Filters only the letters from the string and returns it.
@@ -148,12 +155,16 @@ fun String.isVersionGreaterThan(version: String): Boolean = (ComparableVersion(t
  */
 fun String.isVersionLessThan(version: String): Boolean = (ComparableVersion(this) < ComparableVersion(version))
 
-fun String.fromLegibleString(string: String): Location {
+fun String.fromLegibleString(): Location {
 
-    val args: List<String> = string.split(";")
+    val args: List<String> = this.split(";")
 
     return Location(
         Bukkit.getWorld(args[0]),args[1].toDouble(),args[2].toDouble(),args[3].toDouble(),
         args[4].toFloat(), args[5].toFloat())
 
+}
+
+inline fun <reified T : Any> String.resolve(): T {
+    return ContextResolver.resolve<T>(this)
 }

@@ -5,6 +5,7 @@ import com.zorbeytorunoglu.kLib.task.MCDispatcher
 import com.zorbeytorunoglu.kLib.task.Scopes
 import io.papermc.paper.ban.BanListType
 import kotlinx.coroutines.launch
+import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.TextComponent
 import org.banana_inc.data.Data
 import org.banana_inc.data.DatabaseActions
@@ -237,9 +238,18 @@ fun Player.ejectPassengers() {
     eject()
 }
 
+fun sendMessage(player: Player, message: String){
+    player.sendMessage(message.component)
+}
+
+fun sendMessage(player: Player,message: Component){
+    player.sendMessage(message)
+}
+
 
 val Player.data: Data.Player
     get() {
         val playerData = Data.get<Data.Player>().find { it.uuid == uniqueId }
         return playerData ?: Data.Player(uniqueId).apply { DatabaseActions.store(this) }
     }
+

@@ -10,18 +10,14 @@ import kotlin.reflect.KClass
 
 object ClassGraph {
 
-    private val ignoredEvents: MutableList<KClass<out Event>> = mutableListOf(
+    private val ignoredEvents: List<KClass<out Event>> = listOf(
         EntityAirChangeEvent::class,
         HopperInventorySearchEvent::class,
         VehicleUpdateEvent::class
     )
 
-    val canceledEvents: MutableList<KClass<out Event>> = mutableListOf(
-
-    )
-
-
-    fun getAllBukkitEventClasses(): List<Class<out Event>> {
+    // Lazy property for all bukkit event classes
+    val allBukkitEventClasses: List<Class<out Event>> by lazy {
         val eventClasses = mutableListOf<Class<out Event>>()
         ClassGraph()
             .enableClassInfo()
@@ -38,16 +34,17 @@ object ClassGraph {
                     if ((!ignoredEvents.contains(clazz.kotlin))
                         && !java.lang.reflect.Modifier.isAbstract(clazz.modifiers)
                         && classInfo.getAnnotationInfo(Deprecated::class.java) == null
-                        ) { // Only include non-abstract classes
+                    ) { // Only include non-abstract classes
                         eventClasses.add(clazz)
                     }
                 }
             }
-        return eventClasses
+        eventClasses
     }
 
-    fun getInitOnStartupClasses(): List<Class<out Any>> {
-        val eventClasses = mutableListOf<Class<out Any>>()
+    // Lazy property for init-on-startup classes
+    val initOnStartupClasses: List<KClass<out Any>> by lazy {
+        val eventClasses = mutableListOf<KClass<out Any>>()
         ClassGraph()
             .enableClassInfo()
             .enableExternalClasses()
@@ -57,11 +54,17 @@ object ClassGraph {
             )
             .scan().use { result ->
                 result.getClassesWithAnnotation(InitOnStartup::class.java).forEach { classInfo ->
-                    val clazz = classInfo.loadClass(Any::class.java)
-                    eventClasses.add(clazz)
+                    val clazz = classInfo.loadClass(Any::class.java).kotlin
+                    eventClasses.addAll(allSubClasses(clazz))
                 }
             }
-        return eventClasses
+        eventClasses
+    }
+
+    fun allSubClasses(first: KClass<out Any>,list: MutableList<KClass<out Any>> = mutableListOf()): MutableList<KClass<out Any>>{
+        list.add(first)
+        for(i in first.sealedSubclasses) allSubClasses(i,list)
+        return list
     }
 
 }

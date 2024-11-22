@@ -1,14 +1,19 @@
-inventory:
-- how make some items with customizable properties
-- while others static and editable
-- combo of static items page and inventory that has itemData??? (with item type
+creative cloud stuff
 
+make base resource pack
+- manifest and folders
+- generate modeldata json from folders of textures
 
-gui system
-- uses:
+make resource pack work w/ item viewer
 
-particle receivers optimization:
-- how often do we re-check for new players in particle spawnning system
-- paper scheduler optimization... https://discord.com/channels/289587909051416579/555462289851940864/1302461135194165339
-  - don't use paper radius for recipients on particles
-  - its async if you don't use receiver(double radius)
+item viewer:
+- when click:
+ https://github.com/NichtStudioCode/InvUI
+Anvil gui
+1. items are shown
+1.1 lore...
+2. left and right buttons
+3. filter button:
+3.1 show subclases of itemData, and filter
+
+the rest of the items (:
