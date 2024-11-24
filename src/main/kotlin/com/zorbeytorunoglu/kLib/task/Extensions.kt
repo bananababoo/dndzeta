@@ -49,7 +49,6 @@ suspend fun <T> JavaPlugin.suspendFunctionAsyncWithResult(function: () -> T): T 
 }
 
 suspend fun <T> JavaPlugin.suspendFunctionWithResult(async: Boolean, function: () -> T): T {
-
     return Scopes.supervisorScope.async(MCDispatcher(this,async)) {
 
         function()
@@ -63,41 +62,24 @@ fun JavaPlugin.sync(function: () -> Unit): BukkitTask {
     return this.server.scheduler.runTaskLater(this, Runnable {
         function()
     },0L)
-
 }
 
 
-fun JavaPlugin.delaySync(function: () -> Unit, seconds: Int): BukkitTask {
-
-    return this.server.scheduler.runTaskLater(this, Runnable {
-        function()
-    },seconds*20L)
-
+fun JavaPlugin.delaySync(seconds: Int, function: () -> Unit): BukkitTask {
+    return this.server.scheduler.runTaskLater(this, function,seconds*20L)
 }
 
-fun JavaPlugin.delayync(function: () -> Unit, millis: Long): BukkitTask {
-
-    return this.server.scheduler.runTaskLater(this, Runnable {
-        function()
-    }, millis)
-
+fun JavaPlugin.delaySync(ticks: Long, function: () -> Unit): BukkitTask {
+    return this.server.scheduler.runTaskLater(this, function, ticks)
 }
 
 
-fun JavaPlugin.delayAsync(function: () -> Unit, seconds: Int): BukkitTask {
-
-    return this.server.scheduler.runTaskLaterAsynchronously(this, Runnable {
-        function()
-    },seconds*20L)
-
+fun JavaPlugin.delayAsync(seconds: Int, function: () -> Unit): BukkitTask {
+    return this.server.scheduler.runTaskLaterAsynchronously(this,  function,seconds*20L)
 }
 
-fun JavaPlugin.delayAsync(function: () -> Unit, millis: Long): BukkitTask {
-
-    return this.server.scheduler.runTaskTimer(this, Runnable {
-        function()
-    }, millis,2)
-
+fun JavaPlugin.delayAsync( millis: Long, function: () -> Unit): BukkitTask {
+    return this.server.scheduler.runTaskTimer(this, function, millis,2)
 }
 
 

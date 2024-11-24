@@ -11,39 +11,38 @@ group = "me.bananababoo"
 version = "0.0.1"
 
 dependencies {
+    //paper
     compileOnly(libs.paper.api)
-
+    //minecraft-ajacent
     implementation(libs.acf.paper)
     implementation("net.kyori:adventure-extra-kotlin:4.17.0")
-
+    //kotlin
     implementation(libs.kotlin.stdlib) // https://modrinth.com/plugin/ktlibs-kotlin-stdlib
     implementation(libs.kotlin.script.runtime)
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kLib)
     implementation(libs.kotlin.reflect)
     implementation(libs.classgraph)
-
+    //serialization
     implementation(libs.guava)
-
     implementation(libs.mongo.bson)
     implementation(libs.jackson)
-
-    implementation(libs.joml)
+    //database
     implementation(libs.mongo.jackdriver)
     implementation(libs.kmongo)
+    //ftp
+    implementation("commons-net:commons-net:3.11.1")
 
+    //test
     testImplementation(libs.mockbukkit)
     testImplementation(libs.mockk)
     testImplementation(libs.logback)
-
+    //gui library
     implementation("xyz.xenondevs.invui:invui:1.41")
     implementation("xyz.xenondevs.invui:invui-kotlin:1.41")
-
+    //resourcepack
     implementation("team.unnamed:creative-api:1.7.3")
     implementation("team.unnamed:creative-serializer-minecraft:1.7.3")
-    implementation("team.unnamed:creative-server:1.7.3")
-
-    implementation("net.bytebuddy:byte-buddy:1.15.10")
 
     testImplementation(kotlin("test"))
 }
@@ -103,7 +102,10 @@ tasks.build {
 }
 
 buildConfig {
+    buildConfigField("databaseUsername", providers.gradleProperty("database.username"))
     buildConfigField("databasePassword", providers.gradleProperty("database.password"))
+    buildConfigField("ftpUsername", providers.gradleProperty("ftp.username"))
+    buildConfigField("ftpPassword", providers.gradleProperty("ftp.password"))
 }
 
 

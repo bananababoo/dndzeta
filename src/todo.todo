@@ -1,14 +1,13 @@
 creative cloud stuff
+- can we update resource pack mid way?, reload resource pack which re sends
 
-make base resource pack
-- manifest and folders
-- generate modeldata json from folders of textures
+standardize naming, dndzeta evrywhere, no dashes or hyphens
 
 make resource pack work w/ item viewer
 
 item viewer:
 - when click:
- https://github.com/NichtStudioCode/InvUI
+ https://github.com/NichtStudioCode/InvUI ? clone / copy over?
 Anvil gui
 1. items are shown
 1.1 lore...
@@ -16,4 +15,17 @@ Anvil gui
 3. filter button:
 3.1 show subclases of itemData, and filter
 
+
+clean dependancies
+- set default server.properties https://www.spigotmc.org/threads/util-change-server-properties-easily.113868/ then restart and add lock file...
+
+
 the rest of the items (:
+
+quodona, auto add gradle.properties as part of the task from a secret
+
+sound player
+
+modelengine
+
+3d rollable dice

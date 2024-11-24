@@ -26,13 +26,13 @@ sealed class Data{
     companion object {
         val serverDataLists: MutableMap<KClass<out Data>, MutableSet<Data>> = mutableMapOf()
         inline fun <reified T : Data> get(): List<T> {
-            return serverDataLists[T::class]!!.filterIsInstance<T>()
+            return serverDataLists[T::class]?.filterIsInstance<T>() ?: error("No such DataList: ${T::class.simpleName}")
         }
         inline fun <reified T : Data> get(id: UUID): T? {
             return get<T>().find { it.uuid == id }
         }
         inline fun <reified T : Data> unload(uuid: UUID) {
-            serverDataLists[T::class]!!.remove(get<T>(uuid)!!)
+            serverDataLists[T::class]?.remove(get<T>(uuid)!!)
         }
     }
 
@@ -51,7 +51,7 @@ sealed class Data{
             Bukkit.getPlayer(uuid)!!.sendMessage("money changed: $money")
         }
         @DatabaseUpdateListener("inventory", includeOldData = true)
-        fun updateInventory(old: MutableMap<Int, Item<*>>){
+        fun updateInventory(old: Map<Int, Item<*>>){
             Bukkit.getPlayer(uuid)!!.sendMessage("inventoryChanged changed: $inventory")
             Bukkit.getPlayer(uuid)!!.sendMessage("old inventory: $old")
         }

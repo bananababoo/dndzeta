@@ -16,21 +16,21 @@ object ContextResolver{
     val resolvers: MutableMap<KClass<*>, (String, Any?) -> Any> = mutableMapOf()
 
     init {
-        addResolver { it -> { it.toFloat() } }
-        addResolver { it -> it.toDouble() }
-        addResolver { it -> it.toInt() }
-        addResolver { it -> it.toLong() }
-        addResolver { it -> it.toShort() }
-        addResolver { it -> it.split(",").map { part -> resolve<Float>(part) } }
-        addResolver { it -> it.split(",").map { part -> resolve<Double>(part) } }
-        addResolver { it -> it.split(",").map { part -> resolve<Int>(part) } }
-        addResolver { it -> it.split(",").map { part -> resolve<Long>(part) } }
-        addResolver { it -> it.split(",").map { part -> part } }
-        addResolver { it -> it.toBooleanStrictOrNull() ?: throw ResolutionException("Boolean must be 'true' or 'false', but was '$it'") }
-        addResolver { it -> it.component }
-        addResolver { it -> Bukkit.getOnlinePlayers().find { players -> it.equals(players.name,true) }!! }
-        addResolver { it -> Bukkit.getWorld(it)!! }
-        addResolver { it ->
+        addResolver { it.toFloat() }
+        addResolver { it.toDouble() }
+        addResolver { it.toInt() }
+        addResolver { it.toLong() }
+        addResolver { it.toShort() }
+        addResolver { it.split(",").map { part -> resolve<Float>(part) } }
+        addResolver { it.split(",").map { part -> resolve<Double>(part) } }
+        addResolver { it.split(",").map { part -> resolve<Int>(part) } }
+        addResolver { it.split(",").map { part -> resolve<Long>(part) } }
+        addResolver { it.split(",").map { part -> part } }
+        addResolver { it.toBooleanStrictOrNull() ?: throw ResolutionException("Boolean must be 'true' or 'false', but was '$it'") }
+        addResolver { it.component }
+        addResolver { Bukkit.getOnlinePlayers().find { players -> it.equals(players.name,true) }!! }
+        addResolver { Bukkit.getWorld(it)!! }
+        addResolver {
             val parts = it.split(",")
             if (parts.size != 4) error("Location format should be 'world,x,y,z'")
             Location(resolve<World>(parts[0]), resolve<Double>(parts[1]), resolve<Double>(parts[2]), resolve<Double>(parts[3]))
@@ -69,7 +69,7 @@ object ContextResolver{
         }
     }
 
-    inline fun <reified T : Any, reified U : Any> addResolver(noinline resolver: (String, U) -> T) {
+    inline fun <reified T : Any, reified U : Any> addResolverExtra(noinline resolver: (String, U) -> T) {
         resolvers[T::class] = { input, extra ->
             checkNotNull(extra)
             if(extra is U) {

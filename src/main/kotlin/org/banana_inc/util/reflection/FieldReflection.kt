@@ -45,7 +45,7 @@ object FieldReflection {
 
     private fun getFieldValue(obj: Any, field: Field): Any? {
         return try {
-            field.get(obj) // Get the value of the field
+            field[obj] // Get the value of the field
         } catch (e: IllegalAccessException) {
             null // In case the field is not accessible
         }

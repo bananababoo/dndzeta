@@ -31,7 +31,7 @@ import kotlin.time.Duration.Companion.seconds
 
 
 @CommandAlias("test")
-class Command: BaseCommand() {
+object Command: BaseCommand() {
 
     private val token = StorageToken("CMD-test-task", CancelableTask::class)
 
@@ -106,7 +106,7 @@ class Command: BaseCommand() {
         gun.modifiers.add(Modifier.Enchantment(EnchantmentType.SPEEDY, 1))
         p.data.inventory[0] = gun
         DatabaseActions.updateThenAsync(p.data) {
-            val i = p.data.inventory[0]!!
+            val i = p.data.inventory[0] ?: error("item not found")
             sendMessage(p,"id: ${i.type.id}")
             if (i.type is ItemData.Weapon.Ranged)
                 sendMessage(p, i.type.damageDice.toString())

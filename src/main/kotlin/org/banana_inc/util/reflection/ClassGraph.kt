@@ -1,5 +1,6 @@
 package org.banana_inc.util.reflection
 
+import co.aikar.commands.BaseCommand
 import io.github.classgraph.ClassGraph
 import org.banana_inc.util.initialization.InitOnStartup
 import org.bukkit.event.Event
@@ -56,6 +57,23 @@ object ClassGraph {
                 result.getClassesWithAnnotation(InitOnStartup::class.java).forEach { classInfo ->
                     val clazz = classInfo.loadClass(Any::class.java).kotlin
                     eventClasses.addAll(allSubClasses(clazz))
+                }
+            }
+        eventClasses
+    }
+
+    val allCommandClasses: List<KClass<out BaseCommand>> by lazy {
+        val eventClasses = mutableListOf<KClass<out BaseCommand>>()
+        ClassGraph()
+            .enableClassInfo()
+            .enableExternalClasses()
+            .acceptPackages(
+                "org.banana_inc",
+            )
+            .scan().use { result ->
+                result.getSubclasses(BaseCommand::class.java).forEach { classInfo ->
+                    val clazz = classInfo.loadClass(BaseCommand::class.java).kotlin
+                    eventClasses.add(clazz)
                 }
             }
         eventClasses

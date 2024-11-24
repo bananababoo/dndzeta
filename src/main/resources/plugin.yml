@@ -1,4 +1,4 @@
-name: dnd-zeta
+name: dndzeta
 version: '${version}'
 main: org.banana_inc.DndZeta
 api-version: '1.21'

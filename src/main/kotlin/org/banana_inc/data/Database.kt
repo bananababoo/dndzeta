@@ -19,7 +19,7 @@ import com.mongodb.client.model.changestream.FullDocumentBeforeChange
 import com.mongodb.client.model.changestream.OperationType
 import com.zorbeytorunoglu.kLib.task.Scopes
 import kotlinx.coroutines.launch
-import me.bananababoo.dnd_zeta.BuildConfig
+import me.bananababoo.dndzeta.BuildConfig
 import org.banana_inc.item.ItemData
 import org.banana_inc.item.ItemDeserializer
 import org.banana_inc.item.ItemSerializer
@@ -55,7 +55,7 @@ object Database {
     private val collections: MutableSet<String>  = mutableSetOf()
 
     init {
-        val connectionString = "mongodb+srv://banana:${BuildConfig.databasePassword}@cluster0.j6wxz.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+        val connectionString = "mongodb+srv://${BuildConfig.databaseUsername}:${BuildConfig.databasePassword}@cluster0.j6wxz.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
         val mongoClientSettings = MongoClientSettings.builder()
             .applyConnectionString(ConnectionString(connectionString))
             .uuidRepresentation(UuidRepresentation.STANDARD)
@@ -130,7 +130,7 @@ object Database {
                 }
             }
             OperationType.DELETE -> list.remove(change.fullDocument)
-            else -> {}
+            else -> { return }
         }
     }
 

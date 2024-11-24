@@ -110,13 +110,6 @@ sealed class ItemData(
             logger.info("companion called")
         }
 
-        fun initIds() {
-        }
-
-        fun register(item: ItemData) {
-            logger.info("Registered item: $item")
-            items[item.javaClass] = item
-        }
         operator fun <T: ItemData> get(id: Class<T>): T {
             return id.cast(items[id] ?: error("No such item: $id"))
         }
@@ -132,7 +125,7 @@ sealed class ItemData(
         get() = run { sortedItemClasses.indexOf(this.javaClass) + 10_000 }
 
     init {
-        register(this)
+        items[this.javaClass] = this
     }
 
     fun <T : ItemData> T.create(): Item<T> = Item(this)
