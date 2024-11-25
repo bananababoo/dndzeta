@@ -5,7 +5,6 @@ import co.aikar.commands.annotation.CommandAlias
 import co.aikar.commands.annotation.CommandPermission
 import co.aikar.commands.annotation.Subcommand
 import org.banana_inc.logger
-import org.bukkit.Bukkit
 
 @CommandAlias("resourcepack|rp")
 
@@ -15,8 +14,7 @@ object ResourcePackCommand: BaseCommand(){
     @CommandPermission("zeta.resourcepack.reload")
     fun reload() {
         logger.info("Reloading resource pack")
-        ResourcePackProvider.reloadResourcePack()
-        for (player in Bukkit.getOnlinePlayers()) ResourcePackProvider.applyResourcePack(player)
+        ResourcePackProvider.reloadResourcePackAsync(true)
     }
 
 }

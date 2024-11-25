@@ -30,8 +30,6 @@ dependencies {
     //database
     implementation(libs.mongo.jackdriver)
     implementation(libs.kmongo)
-    //ftp
-    implementation("commons-net:commons-net:3.11.1")
 
     //test
     testImplementation(libs.mockbukkit)
@@ -41,8 +39,15 @@ dependencies {
     implementation("xyz.xenondevs.invui:invui:1.41")
     implementation("xyz.xenondevs.invui:invui-kotlin:1.41")
     //resourcepack
-    implementation("team.unnamed:creative-api:1.7.3")
-    implementation("team.unnamed:creative-serializer-minecraft:1.7.3")
+    implementation(libs.creative.api)
+    implementation(libs.creative.serializer)
+
+    implementation("com.google.api-client:google-api-client:1.34.0")
+    implementation("com.google.api-client:google-api-client-jackson2:1.34.0")
+    implementation("com.google.apis:google-api-services-drive:v3-rev136-1.25.0")
+    implementation("com.google.oauth-client:google-oauth-client-jetty:1.34.0")
+    implementation("com.google.auth:google-auth-library-oauth2-http:1.24.0")
+    implementation("com.google.apis:google-api-services-drive:v3-rev305-1.25.0")
 
     testImplementation(kotlin("test"))
 }
@@ -104,8 +109,8 @@ tasks.build {
 buildConfig {
     buildConfigField("databaseUsername", providers.gradleProperty("database.username"))
     buildConfigField("databasePassword", providers.gradleProperty("database.password"))
-    buildConfigField("ftpUsername", providers.gradleProperty("ftp.username"))
-    buildConfigField("ftpPassword", providers.gradleProperty("ftp.password"))
+    buildConfigField("gdriveAuth", providers.gradleProperty("gdriveauth"))
+
 }
 
 

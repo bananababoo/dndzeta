@@ -1,6 +1,3 @@
-creative cloud stuff
-- can we update resource pack mid way?, reload resource pack which re sends
-
 standardize naming, dndzeta evrywhere, no dashes or hyphens
 
 make resource pack work w/ item viewer
@@ -21,6 +18,8 @@ clean dependancies
 
 
 the rest of the items (:
+
+item textures: https://www.youtube.com/watch?v=FIOXGWCQgAI
 
 quodona, auto add gradle.properties as part of the task from a secret
 

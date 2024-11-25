@@ -10,7 +10,7 @@ import java.util.*
 import kotlin.reflect.KClass
 
 /*
-    When adding data with subtypes that can change, use @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.EXTERNAL_PROPERTY)
+    When adding data with subtypes that are , use @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.EXTERNAL_PROPERTY)
     Each impl needs a @JsonTypeName("<name>") and @JsonCreator constructor
  */
 
@@ -58,7 +58,5 @@ sealed class Data{
 
     }
 }
-
-
 
 
