@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package org.banana_inc.commands
 
 import co.aikar.commands.BaseCommand
@@ -117,7 +119,7 @@ object Command: BaseCommand() {
     @Subcommand("editor")
     fun editor(player: Player){
         MultiLineEditor(player) {
-            player.sendMessage("finished: $list")
+            player.sendMessage("finished: $lines")
         }
     }
 

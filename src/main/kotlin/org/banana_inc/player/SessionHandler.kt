@@ -7,6 +7,7 @@ import org.banana_inc.util.initialization.InitOnStartup
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent
 import org.bukkit.event.player.PlayerQuitEvent
 
+@Suppress("unused")
 @InitOnStartup
 object SessionHandler {
     init {

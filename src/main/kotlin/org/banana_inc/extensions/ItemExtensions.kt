@@ -1,12 +1,22 @@
 package org.banana_inc.extensions
 
 import net.kyori.adventure.text.Component
+import org.banana_inc.item.Item
+import org.banana_inc.item.ItemData
+import org.banana_inc.item.ItemData.Weapon.Melee.Simple.Handaxe.create
+import org.banana_inc.item.ItemStackCreator
+import org.banana_inc.item.Modifier
+import org.banana_inc.logger
+import org.banana_inc.plugin
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.ItemMeta
+import org.bukkit.persistence.PersistentDataType
+import kotlin.reflect.javaType
+import kotlin.reflect.typeOf
 
 /**
  * Gets the display name of the item or sets one.
@@ -15,6 +25,19 @@ import org.bukkit.inventory.meta.ItemMeta
 var ItemMeta.name: Component?
     get() = if (hasDisplayName()) displayName() else null
     set(value) { displayName(value ?: Component.empty()) }
+
+fun ItemStack.changeMeta(action: (ItemMeta).() -> Unit) {
+    val meta = (if (this.hasItemMeta()) this.itemMeta else Bukkit.getItemFactory().getItemMeta(this.type))!!
+    action(meta)
+    itemMeta = meta
+}
+
+fun <T> ItemStack.useMeta(action: (ItemMeta).() -> T): T {
+    val meta = (if (this.hasItemMeta()) this.itemMeta else Bukkit.getItemFactory().getItemMeta(this.type))!!
+    val result: T = action(meta)
+    itemMeta = meta
+    return result
+}
 
 /**
  * Removes specific amount of item from the item stack of player, updates the inventory of the player.
@@ -190,3 +213,25 @@ val Material.isDoor: Boolean get() = name.endsWith("_DOOR")
  * @return True if it is a mine cart, false otherwise.
  */
 val Material.isMineCart: Boolean get() = name.endsWith("_MINECART")
+
+@OptIn(ExperimentalStdlibApi::class)
+val ItemStack.toItem: Item<*>
+    get() {
+        logger.info(itemMeta.toString())
+    return useMeta {
+        val id = persistentDataContainer[ItemStackCreator.idKey, PersistentDataType.INTEGER] ?: error("no id")
+        val modifiers = persistentDataContainer[ItemStackCreator.modifiersKey, PersistentDataType.STRING]
+
+        ItemData[id].create().apply {
+            if(modifiers != null) {
+                this.modifiers.addAll(
+                    plugin.gson.fromJson<Collection<Modifier<ItemData>>>(
+                        modifiers,
+                        typeOf<List<Modifier<*>>>().javaType
+                    ).toList()
+                )
+            }
+            this@apply.amount = this@toItem.amount
+        }
+    }
+}

@@ -13,6 +13,7 @@ import org.bukkit.*
 import org.bukkit.block.Block
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Entity
+import org.bukkit.entity.HumanEntity
 import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
 import java.time.Duration
@@ -247,7 +248,7 @@ fun sendMessage(player: Player,message: Component){
 }
 
 
-val Player.data: Data.Player
+val HumanEntity.data: Data.Player
     get() {
         val playerData = Data.get<Data.Player>().find { it.uuid == uniqueId }
         return playerData ?: Data.Player(uniqueId).apply { DatabaseActions.store(this) }

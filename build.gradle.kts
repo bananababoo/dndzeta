@@ -15,7 +15,7 @@ dependencies {
     compileOnly(libs.paper.api)
     //minecraft-ajacent
     implementation(libs.acf.paper)
-    implementation("net.kyori:adventure-extra-kotlin:4.17.0")
+    implementation(libs.adventure.extra.kotlin)
     //kotlin
     implementation(libs.kotlin.stdlib) // https://modrinth.com/plugin/ktlibs-kotlin-stdlib
     implementation(libs.kotlin.script.runtime)
@@ -30,24 +30,29 @@ dependencies {
     //database
     implementation(libs.mongo.jackdriver)
     implementation(libs.kmongo)
-
     //test
     testImplementation(libs.mockbukkit)
     testImplementation(libs.mockk)
     testImplementation(libs.logback)
     //gui library
-    implementation("xyz.xenondevs.invui:invui:1.41")
-    implementation("xyz.xenondevs.invui:invui-kotlin:1.41")
-    //resourcepack
+    implementation(libs.invui)
+    implementation(libs.invui.kotlin)
+    //resource pack
     implementation(libs.creative.api)
     implementation(libs.creative.serializer)
+    //google drive stuff
+    implementation(libs.google.api.client)
+    implementation(libs.google.api.client.jackson)
+    implementation(libs.google.api.oauth.client.jetty)
+    implementation(libs.google.drive)
+    implementation(libs.google.auth)
 
-    implementation("com.google.api-client:google-api-client:1.34.0")
-    implementation("com.google.api-client:google-api-client-jackson2:1.34.0")
-    implementation("com.google.apis:google-api-services-drive:v3-rev136-1.25.0")
-    implementation("com.google.oauth-client:google-oauth-client-jetty:1.34.0")
-    implementation("com.google.auth:google-auth-library-oauth2-http:1.24.0")
-    implementation("com.google.apis:google-api-services-drive:v3-rev305-1.25.0")
+//    implementation("com.google.api-client:google-api-client:1.34.0")
+//    implementation("com.google.api-client:google-api-client-jackson2:1.34.0")
+//    implementation("com.google.oauth-client:google-oauth-client-jetty:1.34.0")
+//    implementation("com.google.apis:google-api-services-drive:v3-rev136-1.25.0")
+//    implementation("com.google.auth:google-auth-library-oauth2-http:1.24.0")
+//    implementation("com.google.apis:google-api-services-drive:v3-rev305-1.25.0")
 
     testImplementation(kotlin("test"))
 }

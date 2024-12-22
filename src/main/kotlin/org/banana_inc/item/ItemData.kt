@@ -9,14 +9,17 @@ import org.banana_inc.logger
 import org.banana_inc.util.dnd.DamageType
 import org.banana_inc.util.dnd.Dice
 import org.banana_inc.util.initialization.InitOnStartup
+import org.bukkit.Material
 import kotlin.reflect.KClass
 
 @InitOnStartup
 sealed class ItemData(
     val cost: Currency,
     val weight: Weight,
-    val name: String = this::class.simpleName.orEmpty(),
 ){
+    open val itemMCType: Material = Material.NETHERITE_HOE
+    open val stackAmount = 64
+    var name: String
     interface Magical
     sealed class Ammunition(currency: Currency, weight: Weight): ItemData(currency, weight){
         data object Arrow : Ammunition(5.CP, 0.8.oz)
@@ -32,8 +35,9 @@ sealed class ItemData(
         data object GoldPiece : Coin(1.GP)
         data object PlatinumPiece : Coin(1.PP)
     }
-    sealed class Weapon(cost: Currency, weight: Weight, val damageDice: Dice.Damage, val properties: Set<WeaponProperty>, val weaponMastery: WeaponMastery,val combatType: CombatType, val weaponProficiency: WeaponProficiency): ItemData(cost,weight){
-        sealed class Melee(cost: Currency, weight: Weight, damageDice: Dice.Damage, properties: Set<WeaponProperty>, weaponMastery: WeaponMastery, weaponProficiency: WeaponProficiency) : Weapon(cost,weight, damageDice, properties, weaponMastery, CombatType.MELEE, weaponProficiency) {
+    sealed class Weapon(cost: Currency, weight: Weight, val damageDice: Dice.Damage, val properties: Set<WeaponProperty>, val weaponMastery: WeaponMastery, val combatType: CombatType, val weaponProficiency: WeaponProficiency): ItemData(cost,weight){
+        override val stackAmount = 1
+        sealed class Melee(cost: Currency, weight: Weight, damageDice: Dice.Damage, properties: Set<WeaponProperty>, weaponMastery: WeaponMastery, weaponProficiency: WeaponProficiency): Weapon(cost, weight, damageDice, properties, weaponMastery, CombatType.MELEE, weaponProficiency) {
             sealed class Simple(cost: Currency, weight: Weight, damageDice: Dice.Damage, weaponMastery: WeaponMastery, vararg properties: WeaponProperty) : Melee(cost,weight, damageDice, properties.toHashSet(), weaponMastery, WeaponProficiency.SIMPLE) {
                 data object Club : Simple(1.SP, 2.lb, Dice.Damage(Dice(4) to DamageType.BLUDGEONING), WeaponMastery.SLOW, WeaponProperty.Light)
                 data object Dagger : Simple(2.GP, 1.lb, Dice.Damage(Dice(4) to DamageType.PIERCING), WeaponMastery.NICK, WeaponProperty.Finesse, WeaponProperty.Light, WeaponProperty.Thrown(WeaponRange(20,60)))
@@ -90,7 +94,7 @@ sealed class ItemData(
             sealed class Martial(
                 cost: Currency, weight: Weight, damageDice: Dice.Damage, weaponMastery: WeaponMastery,
                 vararg properties: WeaponProperty
-            ) : Ranged(cost, weight, damageDice, properties.toHashSet(), weaponMastery, WeaponProficiency.MARTIAL) {
+            ): Ranged(cost, weight, damageDice, properties.toHashSet(), weaponMastery, WeaponProficiency.MARTIAL) {
                 data object Blowgun : Martial(10.GP, 1.lb, Dice.Damage(Dice(1) to DamageType.PIERCING), WeaponMastery.VEX, WeaponProperty.Ammunition(WeaponRange(25, 100), Ammunition.Needle), WeaponProperty.Loading)
                 data object HandCrossbow : Martial(75.GP, 3.lb, Dice.Damage(Dice(6) to DamageType.PIERCING), WeaponMastery.VEX, WeaponProperty.Ammunition(WeaponRange(30, 120), Ammunition.Bolt), WeaponProperty.Light, WeaponProperty.Loading)
                 data object HeavyCrossbow : Martial(50.GP, 18.lb, Dice.Damage(Dice(10) to DamageType.PIERCING), WeaponMastery.PUSH, WeaponProperty.Ammunition(WeaponRange(100, 400), Ammunition.Bolt), WeaponProperty.Heavy, WeaponProperty.Loading, WeaponProperty.TwoHanded())
@@ -102,8 +106,12 @@ sealed class ItemData(
     }
     companion object {
         private val items = MutableClassToInstanceMap.create<ItemData>()
-        private val sortedItemClasses: Set<Class<out ItemData>> by lazy {
-            items.keys.sortedBy { it.simpleName }.toSet()
+
+        val sortedItemClasses: List<Class<out ItemData>> by lazy {
+            items.keys.sortedBy{ it.simpleName }
+        }
+        val sortedItemsByID: List<ItemData> by lazy {
+            items.values.sortedBy { it.id }
         }
 
         init {
@@ -113,6 +121,15 @@ sealed class ItemData(
         operator fun <T: ItemData> get(id: Class<T>): T {
             return id.cast(items[id] ?: error("No such item: $id"))
         }
+
+        operator fun get(id: Int): ItemData {
+            return sortedItemsByID[id]
+        }
+
+        fun getAll(): Set<ItemData> {
+            return items.values.toSet()
+        }
+
         fun getClasses(): Set<Class<out ItemData>> {
             return items.keys
         }
@@ -122,10 +139,12 @@ sealed class ItemData(
     }
 
     val id: Int
-        get() = run { sortedItemClasses.indexOf(this.javaClass) + 10_000 }
+        get() = run { sortedItemClasses.indexOf(this.javaClass) }
 
     init {
         items[this.javaClass] = this
+        this.name = this.javaClass.simpleName.replace(Regex("(?<=[a-zA-Z])(?=[A-Z])"), " ")
+
     }
 
     fun <T : ItemData> T.create(): Item<T> = Item(this)

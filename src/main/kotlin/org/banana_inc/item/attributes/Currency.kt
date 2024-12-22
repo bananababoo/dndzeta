@@ -10,11 +10,11 @@ class Currency private constructor(val amount: Long, val type: Type){
     }
 
     enum class Type(val acronym: String){
-        COPPER("cp"),
-        SILVER("sp"),
-        ELECTRUM("ep"),
-        GOLD("gp"),
-        PLATINUM("pp")
+        COPPER("<#854c13>⛀"),
+        SILVER("<#8a8783>⛀"),
+        ELECTRUM("<#deed6d>⛂"),
+        GOLD("<gold>⛁"),
+        PLATINUM("<#7fadb0>⛃")
     }
     override fun toString(): String{
         return "$amount ${type.acronym}"

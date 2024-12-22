@@ -8,12 +8,12 @@ import org.bukkit.entity.Player
 
 class MultiLineEditor(
     private val player: Player,
-    private val _list: MutableCollection<String> = mutableListOf(),
+    private val list: MutableCollection<String> = mutableListOf(),
     private val onClose: MultiLineEditor.() -> Unit
 ){
 
-    val list: List<String>
-        get() = _list.toList()
+    val lines: List<String>
+        get() = list.toList()
 
     init {
         renderEditor()
@@ -27,13 +27,13 @@ class MultiLineEditor(
     private val addButton = "<green>[+]".clickableComponent {
         sendMessage(player,typeNewMessage)
         EventManager.chatCallback { newItem: String ->
-             _list.add(newItem)
+             list.add(newItem)
             renderEditor()
         }
     }
     private val removeButton = {item: String ->
         "<red>[X]".clickableComponent {
-             _list.remove(item)
+             list.remove(item)
             renderEditor()
         }
     }
@@ -41,18 +41,16 @@ class MultiLineEditor(
         "<gray> $index: <white>${item}".clickableComponent {
             sendMessage(player,typeNewMessage)
             EventManager.chatCallback { newText: String ->
-                _list.remove(item)
-                _list.add(newText)
+                list.remove(item)
+                list.add(newText)
                 renderEditor()
             }
         }
     }
 
-
-
     private fun renderEditor() {
         sendMessage(player,border)
-        list.forEachIndexed { index, item ->
+        lines.forEachIndexed { index, item ->
             sendMessage(player,removeButton(item) + editButton(item,index))
         }
         sendMessage(player,addButton)

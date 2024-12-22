@@ -1,30 +1,45 @@
-standardize naming, dndzeta evrywhere, no dashes or hyphens
+item move events
+- all click events
+- item pickup / item drop
+- test
+- restrict to guis only
 
-make resource pack work w/ item viewer
+- do we update items only on inventory close???
 
-item viewer:
-- when click:
- https://github.com/NichtStudioCode/InvUI ? clone / copy over?
-Anvil gui
-1. items are shown
-1.1 lore...
-2. left and right buttons
-3. filter button:
-3.1 show subclases of itemData, and filter
-
+clear inv / load inv on login
 
 clean dependancies
 - set default server.properties https://www.spigotmc.org/threads/util-change-server-properties-easily.113868/ then restart and add lock file...
 
+figure out why transform is getting called so much, should only need once for all items
+
+add custom stack amount stuff
+check for illigal stackability on items outside of editor, including giving items to player from the editor
+
+redo item viewer w/ updated code
 
 the rest of the items (:
 
 item textures: https://www.youtube.com/watch?v=FIOXGWCQgAI
 
+resource pack custom icon / font system for icons
+
+the rest of the formatting for the items
+
+save loading of items
+
 quodona, auto add gradle.properties as part of the task from a secret
+
+upgrade resource pack system to beable to do mutli resource packs
+
+resource switching api
 
 sound player
 
 modelengine
 
 3d rollable dice
+
+more item attributes (custom lore, custom nane...)
+
+admin item commands, attribute editor / clone / save / backpacks?
