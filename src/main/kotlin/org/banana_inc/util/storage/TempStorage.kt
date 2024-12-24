@@ -2,7 +2,6 @@ package org.banana_inc.util.storage
 
 import java.util.*
 import kotlin.properties.ReadWriteProperty
-import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
 
 val Any.tempStorage: Storage
@@ -10,13 +9,13 @@ val Any.tempStorage: Storage
 
 private val warehouse: WeakHashMap<Any, Storage> = WeakHashMap()
 
-data class StorageToken<T : Any> (val key: String, val clazz: KClass<T>): Comparable<StorageToken<T>>{
+data class StorageToken<T : Any> (val key: String): Comparable<StorageToken<T>>{
     override fun compareTo(other: StorageToken<T>): Int {
         return key.compareTo(other.key)
     }
 }
 
-data class Storage(val boxes: HashMap<StorageToken<out Any>, Any> = HashMap()){
+data class Storage(val boxes: HashMap<StorageToken<out Any>, Any> = HashMap()) {
 
     fun <T: Any> containsToken(token: StorageToken<T>): Boolean{
         return this.boxes.containsKey(token)
@@ -25,15 +24,21 @@ data class Storage(val boxes: HashMap<StorageToken<out Any>, Any> = HashMap()){
         boxes[token] = value
     }
     inline operator fun <reified T: Any> set(key: String, value: T){
-        this[StorageToken(key, T::class)] = value
+        this[StorageToken(key)] = value
     }
     inline operator fun <reified T: Any> get(key: StorageToken<T>): T? {
-        return (boxes[key] ?: return null) as T
+        return boxes[key] as? T
+    }
+    inline operator fun <reified T: Any> get(key: String): T? {
+        return get(StorageToken(key)) as? T
+    }
+    inline fun <reified T: Any> putIfAbsent(key: String, value: T){
+        if(get<T>(key) == null) set(key,value)
+    }
+    inline fun <reified T: Any> putIfAbsent(key: StorageToken<T>, value: T){
+        if(get<T>(key) == null) set(key,value)
     }
 
-    inline operator fun <reified T: Any> get(key: String): T? {
-        return get(StorageToken(key, T::class))
-    }
 
 }
 

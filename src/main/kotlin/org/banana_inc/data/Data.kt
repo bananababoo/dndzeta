@@ -1,5 +1,6 @@
 package org.banana_inc.data
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
@@ -46,6 +47,8 @@ sealed class Data{
         var money: Long = 0,
         var inventory: MutableMap<Int, Item<*>> = mutableMapOf()
     ) : Data(){
+        @JsonIgnore
+        val localData = Local()
         @DatabaseUpdateListener("money")
         fun updateMoney(){
             Bukkit.getPlayer(uuid)!!.sendMessage("money changed: $money")
@@ -56,6 +59,12 @@ sealed class Data{
             Bukkit.getPlayer(uuid)!!.sendMessage("old inventory: $old")
         }
 
+        /**
+         * This Data does not need to be saved, and can be safely removed on login
+         */
+        data class Local(
+            var inGUI: Boolean = false
+        )
     }
 }
 

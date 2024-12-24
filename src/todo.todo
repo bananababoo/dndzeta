@@ -1,32 +1,16 @@
-item move events
-- all click events
-- item pickup / item drop
-- test
-- restrict to guis only
-
-- do we update items only on inventory close???
-
-clear inv / load inv on login
-
-clean dependancies
-- set default server.properties https://www.spigotmc.org/threads/util-change-server-properties-easily.113868/ then restart and add lock file...
-
-figure out why transform is getting called so much, should only need once for all items
-
 add custom stack amount stuff
 check for illigal stackability on items outside of editor, including giving items to player from the editor
 
-redo item viewer w/ updated code
+redo item viewer w/ updated code (import gui lib???)
 
-the rest of the items (:
-
-item textures: https://www.youtube.com/watch?v=FIOXGWCQgAI
+make gui based item creator, convert all items to that, using formats defined already
+- save stuff to remote
 
 resource pack custom icon / font system for icons
 
-the rest of the formatting for the items
+the rest of the items
 
-save loading of items
+item textures: https://www.youtube.com/watch?v=FIOXGWCQgAI
 
 quodona, auto add gradle.properties as part of the task from a secret
 
@@ -36,6 +20,8 @@ resource switching api
 
 sound player
 
+shift click logic instead of hacky 1 tick update
+
 modelengine
 
 3d rollable dice
@@ -43,3 +29,12 @@ modelengine
 more item attributes (custom lore, custom nane...)
 
 admin item commands, attribute editor / clone / save / backpacks?
+
+item textures
+
+figure out stack item calculation (if i have 5 coins, weight should be sum, cost should be sum)
+
+item lore
+-
+
+ai?

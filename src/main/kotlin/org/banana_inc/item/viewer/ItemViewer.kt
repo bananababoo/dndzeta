@@ -2,13 +2,14 @@ package org.banana_inc.item.viewer
 
 import org.banana_inc.extensions.addItem
 import org.banana_inc.extensions.component
+import org.banana_inc.extensions.data
 import org.banana_inc.extensions.useMeta
 import org.banana_inc.gui.ChangePageItem
 import org.banana_inc.gui.ClickToGetItem
+import org.banana_inc.gui.GUI
 import org.banana_inc.item.Item
 import org.banana_inc.item.ItemData
 import org.banana_inc.item.ItemData.Weapon.Melee.Simple.Handaxe.create
-import org.banana_inc.logger
 import org.banana_inc.util.initialization.InitOnStartup
 import org.banana_inc.util.reflection.ClassReflection
 import org.bukkit.Material
@@ -20,7 +21,7 @@ import xyz.xenondevs.invui.item.Click
 import xyz.xenondevs.invui.item.ItemBuilder
 import xyz.xenondevs.invui.window.AnvilWindow
 
-class ItemViewer(player: Player) {
+class ItemViewer(player: Player): GUI(player.data) {
     @InitOnStartup
     companion object {
         init{
@@ -94,16 +95,13 @@ class ItemViewer(player: Player) {
         setLowerGui(gui)
         addRenameHandler {
             query = it
-            logger.info("query: $query")
             updateItems()
         }
         addOpenHandler { updateItems() }
         addCloseHandler{
+            onClose()
             player.closeInventory()
-            for(item in inStorage) {
-                logger.info("${item.item.amount} amount")
-                player.inventory.addItem(item.item)
-            }
+            player.inventory.addItem(*inStorage.map{ it.item }.toTypedArray())
         }
     }
 
@@ -112,12 +110,12 @@ class ItemViewer(player: Player) {
     }
 
     class ItemViewerItem(item: Item<*>, private val viewer: ItemViewer): ClickToGetItem(item){
-        override fun handleClick(clickType: ClickType, player: Player, p2: Click) {
+        override fun handleClick(p0: ClickType, player: Player, p2: Click) {
             val storageItem = viewer.inStorage.find { id -> id.item.type == item.type }
-            when(clickType){
+            when(p0){
                 ClickType.LEFT -> storageItem?.let { it.item.amount += 1 } ?: viewer.inStorage.add(ItemViewerItem(item.copy(),viewer).apply { viewer.updateItems() })
                 ClickType.SHIFT_LEFT -> storageItem?.let { it.item.amount += 64 } ?: viewer.inStorage.add(ItemViewerItem(item.copy().apply { amount = 64 },viewer).apply { viewer.updateItems() })
-                ClickType.RIGHT -> if(storageItem != null) if(storageItem.item.amount == 1) { storageItem.viewer.updateItems(); viewer.inStorage.remove(storageItem)  }else storageItem.item.amount -= 1
+                ClickType.RIGHT -> if(storageItem != null) if(storageItem.item.amount == 1) { storageItem.viewer.updateItems(); viewer.inStorage.remove(storageItem) } else storageItem.item.amount -= 1
                 ClickType.SHIFT_RIGHT -> {
                     if(storageItem != null) {
                         viewer.inStorage.remove(storageItem)

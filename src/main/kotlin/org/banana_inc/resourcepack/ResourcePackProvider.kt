@@ -40,7 +40,7 @@ object ResourcePackProvider {
     init {
         reloadResourcePack()
         EventManager.addListener<PlayerJoinEvent> {
-            applyResourcePack(it.player)
+            applyResourcePack(player)
         }
     }
 

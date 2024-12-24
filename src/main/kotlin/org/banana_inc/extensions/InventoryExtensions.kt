@@ -57,24 +57,3 @@ fun Inventory.getSpaceOf(itemStack: ItemStack): Int {
         else 0
     }.count()
 }
-
-/**
- * Clones the Inventory.
- * @param cloneItemStacks Boolean
- * @param owner InventoryHolder
- * @param title Title
- * @return Inventory
- */
-fun Inventory.clone(cloneItemStacks: Boolean = true, owner: InventoryHolder? = holder, title: String? = null): Inventory {
-    val inventory = if (type == InventoryType.CHEST)
-        com.zorbeytorunoglu.kLib.extensions.Inventory(size, owner, title)
-    else
-        com.zorbeytorunoglu.kLib.extensions.Inventory(type, owner, title)
-
-    inventory.contents = if (cloneItemStacks)
-        contents.map { it?.clone()   }.toTypedArray()
-    else
-        contents
-
-    return inventory
-}

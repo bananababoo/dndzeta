@@ -30,7 +30,7 @@ data class Item<T: ItemData> @JsonIgnore constructor(
     ): this(ItemData[type.java], modifiers)
 
     fun itemStack(): ItemStack{
-        return ItemStackCreator.transform(this);
+        return ItemStackCreator.transform(this)
     }
 
     fun equalBesidesAmount(other: Item<*>): Boolean{
@@ -39,6 +39,10 @@ data class Item<T: ItemData> @JsonIgnore constructor(
         if(this.modifiers != other.modifiers)
             return false
         return true
+    }
+
+    override fun toString(): String {
+        return "$type:$amount" + modifiers.ifEmpty { "" }
     }
 }
 

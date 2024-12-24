@@ -2,23 +2,23 @@
 acf = "1.0.0"
 classgraph = "4.8.179"
 creative = "1.7.3"
-googleAuth = "1.30.0"
-googleClient = "2.7.0"
-googleDrive = "v3-rev20241027-2.0.0"
-googleOauth = "1.36.0"
+googleAuth = "1.30.1"
+googleClient = "2.7.1"
+googleDrive = "v3-rev20241206-2.0.0"
+googleOauth = "1.37.0"
 guava = "33.4.0-jre"
 jackson = "2.18.2"
-kLib = "0.0.8"
 kmongo = "5.1.0"
 kotlin = "2.1.20-Beta1"
 kotlinx = "1.10.1"
+kyori = "4.18.0"
 logback = "1.5.15"
 mockbukkit = "4.21.0"
 mockk = "1.13.14"
 mongodb = "5.3.0-beta0"
 mongojack = "5.0.2"
 paper = "1.21.4-R0.1-SNAPSHOT"
-xyz-xenondevs-invui = "2.0.0-alpha.1"
+xyz-xenondevs-invui = "2.0.0-alpha.6"
 
 [libraries]
 acf-paper = { module = "com.github.bananababoo.acf:acf-paper", version.ref = "acf" }
@@ -35,14 +35,13 @@ guava = { module = "com.google.guava:guava", version.ref = "guava" }
 invui = { module = "xyz.xenondevs.invui:invui", version.ref = "xyz-xenondevs-invui" }
 invui-kotlin = { module = "xyz.xenondevs.invui:invui-kotlin", version.ref = "xyz-xenondevs-invui" }
 jackson = { module = "com.fasterxml.jackson.core:jackson-core", version.ref = "jackson" }
-kLib = { module = "com.github.zorbeytorunoglu:kLib", version.ref = "kLib" }
 kmongo = { module = "org.litote.kmongo:kmongo", version.ref = "kmongo" }
 kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin" }
 kotlin-script-runtime = { module = "org.jetbrains.kotlin:kotlin-script-runtime", version.ref = "kotlin" }
 kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx" }
 logback = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
-mockbukkit = { module = "com.github.MockBukkit:MockBukkit", version.ref = "mockbukkit" }
+mockbukkit = { module = "org.mockbukkit.mockbukkit:mockbukkit-v1.21", version.ref = "mockbukkit" }
 mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
 mongo-bson = { module = "org.mongodb:bson-kotlinx", version.ref = "mongodb" }
 mongo-jackdriver = { module = "org.mongojack:mongojack", version.ref = "mongojack" }

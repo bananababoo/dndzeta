@@ -8,6 +8,7 @@ import org.bukkit.event.Cancellable
 import org.bukkit.event.Event
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
+import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.player.PlayerAdvancementDoneEvent
 import org.bukkit.event.player.PlayerLoginEvent
 import java.util.concurrent.ConcurrentHashMap
@@ -28,6 +29,10 @@ object EventManager: Listener {
         val pm = plugin.server.pluginManager
         for(i in ClassGraph.allBukkitEventClasses){
             pm.registerEvent(i,this, EventPriority.HIGH, { _, event ->
+                if(!i.isInstance(event)) return@registerEvent
+                if(event::class == InventoryClickEvent::class){
+                    logger.info("clickevent: $event" + " ${event::class}" + " $i")
+                }
                 if (event is Cancellable && canceledEvents.contains(event::class))
                     event.isCancelled = true
                 handleEvent(event)
@@ -49,7 +54,7 @@ object EventManager: Listener {
         }
     }
 
-    inline fun <reified T : Event> addListener(noinline action: (T) -> Unit) {
+    inline fun <reified T : Event> addListener(noinline action: T.() -> Unit) {
         events.compute(T::class) { _, existingActions ->
             (existingActions ?: CopyOnWriteArraySet<(Event) -> Unit>()).apply { add{ action(it as T) } }
         }
@@ -72,8 +77,12 @@ object EventManager: Listener {
 
     private fun handleEvent(event: Event) {
         val handlers = events[event::class]
+        if(handlers != null){
+            logger.info("event: ${event::class}: $event")
+        }
         for (handler in handlers?: return) {
             handler(event)
+            logger.info("event2: ${event::class}: $event")
         }
     }
 

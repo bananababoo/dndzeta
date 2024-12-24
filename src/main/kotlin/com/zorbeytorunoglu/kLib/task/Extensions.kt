@@ -65,6 +65,10 @@ fun JavaPlugin.sync(function: () -> Unit): BukkitTask {
 }
 
 
+fun JavaPlugin.nextTick(function: () -> Unit): BukkitTask {
+    return this.server.scheduler.runTask(this, function)
+}
+
 fun JavaPlugin.delaySync(seconds: Int, function: () -> Unit): BukkitTask {
     return this.server.scheduler.runTaskLater(this, function,seconds*20L)
 }

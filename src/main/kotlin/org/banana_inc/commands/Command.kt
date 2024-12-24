@@ -35,7 +35,7 @@ import kotlin.time.Duration.Companion.seconds
 @CommandAlias("test")
 object Command: BaseCommand() {
 
-    private val token = StorageToken("CMD-test-task", CancelableTask::class)
+    private val token = StorageToken<CancelableTask>("CMD-test-task")
 
     @Default
     fun testCommand(player: Player, x: Float, y: Float) {
@@ -57,7 +57,7 @@ object Command: BaseCommand() {
     @Subcommand("registerChatEvent")
     fun registerTest(player: Player, args: String ) {
         player.sendMessage("registered event: $args")
-        EventManager.addListener<AsyncChatEvent>{  it.player.sendMessage(args) }
+        EventManager.addListener<AsyncChatEvent>{  player.sendMessage(args) }
     }
     @Subcommand("money")
     fun money(player: Player, amount: Long ) {
@@ -78,7 +78,7 @@ object Command: BaseCommand() {
     fun testConsole() {
         println("hello")
 
-        val token = StorageToken("test", Int::class)
+        val token = StorageToken<Int>("test")
         3.tempStorage[token] = 7
         println((1 + 2).tempStorage[token]) //prints 7
 
@@ -94,7 +94,7 @@ object Command: BaseCommand() {
     @Subcommand("player")
     fun testConsole(player: Player) {
         println("hello")
-        val token = StorageToken("test", Int::class)
+        val token = StorageToken<Int>("test")
         println("0: ${player.tempStorage}")
         player.tempStorage[token] = 7
         println("0.5: $player")
@@ -104,7 +104,7 @@ object Command: BaseCommand() {
 
     @Subcommand("beep")
     fun bop(p: Player){
-        val gun = ItemData.Weapon.Ranged.Martial.Blowgun.create()
+        val gun = ItemData.Weapon.Ranged.Martial.Gun.Blowgun.create()
         gun.modifiers.add(Modifier.Enchantment(EnchantmentType.SPEEDY, 1))
         p.data.inventory[0] = gun
         DatabaseActions.updateThenAsync(p.data) {

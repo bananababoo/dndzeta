@@ -9,7 +9,6 @@ import org.banana_inc.logger
 import org.banana_inc.util.dnd.DamageType
 import org.banana_inc.util.dnd.Dice
 import org.banana_inc.util.initialization.InitOnStartup
-import org.bukkit.Material
 import kotlin.reflect.KClass
 
 @InitOnStartup
@@ -17,17 +16,20 @@ sealed class ItemData(
     val cost: Currency,
     val weight: Weight,
 ){
-    open val itemMCType: Material = Material.NETHERITE_HOE
+    open val itemType: ItemMaterial = ItemMaterial.ITEM
     open val stackAmount = 64
     var name: String
+
     interface Magical
     sealed class Ammunition(currency: Currency, weight: Weight): ItemData(currency, weight){
+        override val itemType = ItemMaterial.AMMO
         data object Arrow : Ammunition(5.CP, 0.8.oz)
         data object Bolt : Ammunition(5.CP, 1.2.oz)
         data object FirearmBullet : Ammunition(3.SP, .5.lb)
         data object Needle : Ammunition(2.CP, .32.oz)
         data object SlingBullet : Ammunition(4.CP, 1.2.oz)
     }
+
     sealed class Coin(currency: Currency): ItemData(currency, .32.oz){
         data object CopperPiece : Coin(1.CP)
         data object SilverPiece : Coin(1.SP)
@@ -35,13 +37,18 @@ sealed class ItemData(
         data object GoldPiece : Coin(1.GP)
         data object PlatinumPiece : Coin(1.PP)
     }
+
     sealed class Weapon(cost: Currency, weight: Weight, val damageDice: Dice.Damage, val properties: Set<WeaponProperty>, val weaponMastery: WeaponMastery, val combatType: CombatType, val weaponProficiency: WeaponProficiency): ItemData(cost,weight){
         override val stackAmount = 1
+        override val itemType = ItemMaterial.WEAPON
+
         sealed class Melee(cost: Currency, weight: Weight, damageDice: Dice.Damage, properties: Set<WeaponProperty>, weaponMastery: WeaponMastery, weaponProficiency: WeaponProficiency): Weapon(cost, weight, damageDice, properties, weaponMastery, CombatType.MELEE, weaponProficiency) {
+
             sealed class Simple(cost: Currency, weight: Weight, damageDice: Dice.Damage, weaponMastery: WeaponMastery, vararg properties: WeaponProperty) : Melee(cost,weight, damageDice, properties.toHashSet(), weaponMastery, WeaponProficiency.SIMPLE) {
+
                 data object Club : Simple(1.SP, 2.lb, Dice.Damage(Dice(4) to DamageType.BLUDGEONING), WeaponMastery.SLOW, WeaponProperty.Light)
                 data object Dagger : Simple(2.GP, 1.lb, Dice.Damage(Dice(4) to DamageType.PIERCING), WeaponMastery.NICK, WeaponProperty.Finesse, WeaponProperty.Light, WeaponProperty.Thrown(WeaponRange(20,60)))
-                data object Greatclub : Simple(2.SP, 10.lb, Dice.Damage(Dice( 8) to DamageType.BLUDGEONING), WeaponMastery.PUSH, WeaponProperty.TwoHanded())
+                data object Greatclub : Simple(2.SP, 10.lb, Dice.Damage(Dice(8) to DamageType.BLUDGEONING), WeaponMastery.PUSH, WeaponProperty.TwoHanded())
                 data object Handaxe : Simple(5.GP, 2.lb, Dice.Damage(Dice(6) to DamageType.SLASHING), WeaponMastery.VEX, WeaponProperty.Light, WeaponProperty.Thrown(WeaponRange(20,60)))
                 data object Javelin : Simple(5.SP, 2.lb, Dice.Damage(Dice(6) to DamageType.PIERCING), WeaponMastery.SLOW, WeaponProperty.Thrown(WeaponRange(30,120)))
                 data object LightHammer : Simple(2.GP, 2.lb, Dice.Damage(Dice(4) to DamageType.BLUDGEONING), WeaponMastery.NICK, WeaponProperty.Light, WeaponProperty.Thrown(WeaponRange(20,60)))
@@ -50,6 +57,7 @@ sealed class ItemData(
                 data object Sickle : Simple(1.GP, 2.lb, Dice.Damage(Dice(4) to DamageType.SLASHING), WeaponMastery.NICK, WeaponProperty.Light)
                 data object Spear : Simple(1.GP, 3.lb, Dice.Damage(Dice(6) to DamageType.PIERCING), WeaponMastery.SAP, WeaponProperty.Thrown(WeaponRange(20,60)), WeaponProperty.Versatile(Dice(8)))
             }
+
             sealed class Martial(
                 cost: Currency, weight: Weight, damageDice: Dice.Damage, weaponMastery: WeaponMastery,
                 vararg properties: WeaponProperty
@@ -75,6 +83,7 @@ sealed class ItemData(
                 data object Whip : Martial(2.GP, 3.lb, Dice.Damage(Dice(4) to DamageType.SLASHING), WeaponMastery.SLOW, WeaponProperty.Finesse, WeaponProperty.Reach)
             }
         }
+
         sealed class Ranged(
             cost: Currency, weight: Weight, damageDice: Dice.Damage, properties: Set<WeaponProperty>,
             weaponMastery: WeaponMastery, weaponProficiency: WeaponProficiency
@@ -82,28 +91,37 @@ sealed class ItemData(
 
             sealed class Simple(
                 cost: Currency, weight: Weight, damageDice: Dice.Damage, weaponMastery: WeaponMastery,
-                vararg properties: WeaponProperty
+                vararg properties: WeaponProperty,
+                override val itemType: ItemMaterial = ItemMaterial.CROSSBOW
             ) : Ranged(cost, weight, damageDice, properties.toHashSet(), weaponMastery, WeaponProficiency.SIMPLE) {
 
-                data object Dart : Simple(5.CP, 0.25.lb, Dice.Damage(Dice(4) to DamageType.PIERCING), WeaponMastery.VEX, WeaponProperty.Finesse, WeaponProperty.Thrown(WeaponRange(20, 60)))
+                data object Dart : Simple(5.CP, 0.25.lb, Dice.Damage(Dice(4) to DamageType.PIERCING), WeaponMastery.VEX, WeaponProperty.Finesse, WeaponProperty.Thrown(WeaponRange(20, 60)), itemType=ItemMaterial.THROWABLE)
                 data object LightCrossbow : Simple(25.GP, 5.lb, Dice.Damage(Dice(8) to DamageType.PIERCING), WeaponMastery.SLOW, WeaponProperty.Ammunition(WeaponRange(80, 320), Ammunition.Bolt), WeaponProperty.Loading, WeaponProperty.TwoHanded())
-                data object Shortbow : Simple(25.GP, 2.lb, Dice.Damage(Dice(6) to DamageType.PIERCING), WeaponMastery.VEX, WeaponProperty.Ammunition(WeaponRange(80, 320), Ammunition.Arrow), WeaponProperty.TwoHanded())
+                data object Shortbow : Simple(25.GP, 2.lb, Dice.Damage(Dice(6) to DamageType.PIERCING), WeaponMastery.VEX, WeaponProperty.Ammunition(WeaponRange(80, 320), Ammunition.Arrow), WeaponProperty.TwoHanded(),itemType=ItemMaterial.BOW)
                 data object Sling : Simple(1.SP, 0.lb, Dice.Damage(Dice(4) to DamageType.BLUDGEONING), WeaponMastery.SLOW, WeaponProperty.Ammunition(WeaponRange(30, 120), Ammunition.SlingBullet))
             }
 
             sealed class Martial(
                 cost: Currency, weight: Weight, damageDice: Dice.Damage, weaponMastery: WeaponMastery,
-                vararg properties: WeaponProperty
+                vararg properties: WeaponProperty, override val itemType: ItemMaterial = ItemMaterial.CROSSBOW
             ): Ranged(cost, weight, damageDice, properties.toHashSet(), weaponMastery, WeaponProficiency.MARTIAL) {
-                data object Blowgun : Martial(10.GP, 1.lb, Dice.Damage(Dice(1) to DamageType.PIERCING), WeaponMastery.VEX, WeaponProperty.Ammunition(WeaponRange(25, 100), Ammunition.Needle), WeaponProperty.Loading)
+
+                sealed class Gun(cost: Currency, weight: Weight, damageDice: Dice.Damage, weaponMastery: WeaponMastery,
+                                 vararg properties: WeaponProperty, override val itemType: ItemMaterial = ItemMaterial.GUN
+                ): Martial(cost, weight, damageDice, weaponMastery, *properties,itemType=ItemMaterial.GUN){
+
+                    data object Blowgun : Gun(10.GP, 1.lb, Dice.Damage(Dice(1) to DamageType.PIERCING), WeaponMastery.VEX, WeaponProperty.Ammunition(WeaponRange(25, 100), Ammunition.Needle), WeaponProperty.Loading)
+                    data object Pistol : Gun(250.GP, 3.lb, Dice.Damage(Dice(10) to DamageType.PIERCING), WeaponMastery.VEX, WeaponProperty.Ammunition(WeaponRange(30, 90), Ammunition.FirearmBullet), WeaponProperty.Loading)
+                    data object Musket : Gun(500.GP, 10.lb, Dice.Damage(Dice(12) to DamageType.PIERCING), WeaponMastery.SLOW, WeaponProperty.Ammunition(WeaponRange(40, 120), Ammunition.FirearmBullet), WeaponProperty.Loading, WeaponProperty.TwoHanded())
+                }
+
                 data object HandCrossbow : Martial(75.GP, 3.lb, Dice.Damage(Dice(6) to DamageType.PIERCING), WeaponMastery.VEX, WeaponProperty.Ammunition(WeaponRange(30, 120), Ammunition.Bolt), WeaponProperty.Light, WeaponProperty.Loading)
-                data object HeavyCrossbow : Martial(50.GP, 18.lb, Dice.Damage(Dice(10) to DamageType.PIERCING), WeaponMastery.PUSH, WeaponProperty.Ammunition(WeaponRange(100, 400), Ammunition.Bolt), WeaponProperty.Heavy, WeaponProperty.Loading, WeaponProperty.TwoHanded())
-                data object Longbow : Martial(50.GP, 2.lb, Dice.Damage(Dice(8) to DamageType.PIERCING), WeaponMastery.SLOW, WeaponProperty.Ammunition(WeaponRange(150, 600), Ammunition.Arrow), WeaponProperty.Heavy, WeaponProperty.TwoHanded())
-                data object Musket : Martial(500.GP, 10.lb, Dice.Damage(Dice(12) to DamageType.PIERCING), WeaponMastery.SLOW, WeaponProperty.Ammunition(WeaponRange(40, 120), Ammunition.FirearmBullet), WeaponProperty.Loading, WeaponProperty.TwoHanded())
-                data object Pistol : Martial(250.GP, 3.lb, Dice.Damage(Dice(10) to DamageType.PIERCING), WeaponMastery.VEX, WeaponProperty.Ammunition(WeaponRange(30, 90), Ammunition.FirearmBullet), WeaponProperty.Loading)
+                data object HeavyCrossbow : Martial(50.GP, 18.lb, Dice.Damage(Dice(10) to DamageType.PIERCING), WeaponMastery.PUSH, WeaponProperty.Ammunition(WeaponRange(100, 400), Ammunition.Bolt), WeaponProperty.Heavy, WeaponProperty.Loading, WeaponProperty.TwoHanded(),)
+                data object Longbow : Martial(50.GP, 2.lb, Dice.Damage(Dice(8) to DamageType.PIERCING), WeaponMastery.SLOW, WeaponProperty.Ammunition(WeaponRange(150, 600), Ammunition.Arrow), WeaponProperty.Heavy, WeaponProperty.TwoHanded(),itemType=ItemMaterial.BOW)
             }
         }
     }
+
     companion object {
         private val items = MutableClassToInstanceMap.create<ItemData>()
 

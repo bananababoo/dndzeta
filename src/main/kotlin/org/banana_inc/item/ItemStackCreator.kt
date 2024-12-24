@@ -4,7 +4,6 @@ import net.kyori.adventure.text.Component
 import org.banana_inc.extensions.component
 import org.banana_inc.extensions.useMeta
 import org.banana_inc.plugin
-import org.bukkit.Material
 import org.bukkit.NamespacedKey
 import org.bukkit.inventory.ItemStack
 import org.bukkit.persistence.PersistentDataType
@@ -29,9 +28,10 @@ object ItemStackCreator {
     }
 
     private fun transform(itemData: ItemData): ItemStack {
-        val item = ItemStack(Material.NETHERITE_HOE)
+        val item = ItemStack(itemData.itemType.material)
         val meta = item.itemMeta
 
+        meta.setMaxStackSize(itemData.stackAmount)
         meta.displayName(itemData.name.component)
         meta.lore(figureOutLore(itemData))
         meta.persistentDataContainer[NamespacedKey.fromString("id", plugin)!!, PersistentDataType.INTEGER] = itemData.id

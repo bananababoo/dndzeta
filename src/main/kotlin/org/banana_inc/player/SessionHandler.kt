@@ -3,8 +3,10 @@ package org.banana_inc.player
 import org.banana_inc.EventManager
 import org.banana_inc.data.Data
 import org.banana_inc.data.DatabaseActions
+import org.banana_inc.extensions.data
 import org.banana_inc.util.initialization.InitOnStartup
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent
+import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerQuitEvent
 
 @Suppress("unused")
@@ -12,11 +14,24 @@ import org.bukkit.event.player.PlayerQuitEvent
 object SessionHandler {
     init {
         EventManager.addListener<AsyncPlayerPreLoginEvent> {
-            DatabaseActions.load<Data.Player>(it.uniqueId) ?: DatabaseActions.store(Data.Player(it.uniqueId))
+            //---Database---
+            DatabaseActions.load<Data.Player>(uniqueId) ?: DatabaseActions.store(Data.Player(uniqueId))
         }
 
         EventManager.addListener<PlayerQuitEvent> {
-            Data.unload<Data.Player>(it.player.uniqueId)
+            //---Database---
+            DatabaseActions.update(player.data)
+
+            //---Cached Data---
+            Data.unload<Data.Player>(player.uniqueId)
+        }
+
+        EventManager.addListener<PlayerJoinEvent>{
+            //---Inventory---
+            player.inventory.clear()
+            for (item in player.data.inventory) {
+                player.inventory.setItem(item.key, item.value.itemStack())
+            }
         }
     }
 }

@@ -13,14 +13,13 @@ version = "0.0.1"
 dependencies {
     //paper
     compileOnly(libs.paper.api)
-    //minecraft-ajacent
+    //minecraft-adjacent
     implementation(libs.acf.paper)
     implementation(libs.adventure.extra.kotlin)
     //kotlin
     implementation(libs.kotlin.stdlib) // https://modrinth.com/plugin/ktlibs-kotlin-stdlib
     implementation(libs.kotlin.script.runtime)
     implementation(libs.kotlinx.coroutines.core)
-    implementation(libs.kLib)
     implementation(libs.kotlin.reflect)
     implementation(libs.classgraph)
     //serialization
@@ -46,13 +45,6 @@ dependencies {
     implementation(libs.google.api.oauth.client.jetty)
     implementation(libs.google.drive)
     implementation(libs.google.auth)
-
-//    implementation("com.google.api-client:google-api-client:1.34.0")
-//    implementation("com.google.api-client:google-api-client-jackson2:1.34.0")
-//    implementation("com.google.oauth-client:google-oauth-client-jetty:1.34.0")
-//    implementation("com.google.apis:google-api-services-drive:v3-rev136-1.25.0")
-//    implementation("com.google.auth:google-auth-library-oauth2-http:1.24.0")
-//    implementation("com.google.apis:google-api-services-drive:v3-rev305-1.25.0")
 
     testImplementation(kotlin("test"))
 }

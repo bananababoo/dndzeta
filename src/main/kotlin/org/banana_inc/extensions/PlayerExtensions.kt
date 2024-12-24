@@ -239,11 +239,15 @@ fun Player.ejectPassengers() {
     eject()
 }
 
-fun sendMessage(player: Player, message: String){
-    player.sendMessage(message.component)
+
+
+fun sendMessage(player: HumanEntity, vararg message: String){
+    for(m in message){
+        player.sendMessage(m.component)
+    }
 }
 
-fun sendMessage(player: Player,message: Component){
+fun sendMessage(player: HumanEntity, message: Component){
     player.sendMessage(message)
 }
 
