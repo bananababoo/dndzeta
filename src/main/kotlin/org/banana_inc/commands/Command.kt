@@ -109,7 +109,7 @@ object Command: BaseCommand() {
         p.data.inventory[0] = gun
         DatabaseActions.updateThenAsync(p.data) {
             val i = p.data.inventory[0] ?: error("item not found")
-            sendMessage(p,"id: ${i.type.id}")
+            sendMessage(p,"id: ${i.type.name}")
             if (i.type is ItemData.Weapon.Ranged)
                 sendMessage(p, i.type.damageDice.toString())
 

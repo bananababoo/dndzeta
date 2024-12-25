@@ -17,8 +17,8 @@ object ItemStackCreator {
         var base = transform(item.type)
         base.amount = item.amount
         base.useMeta {
-            this.setCustomModelData(item.type.id)
-            persistentDataContainer[idKey, PersistentDataType.INTEGER] = item.type.id
+            this.itemModel = NamespacedKey("dndzeta", "item/${item.type.name}")
+            persistentDataContainer[idKey, PersistentDataType.STRING] = item.type.name
             persistentDataContainer[modifiersKey, PersistentDataType.STRING] = plugin.gson.toJson(item.modifiers)
         }
         for(modifier in item.modifiers) {
@@ -34,7 +34,7 @@ object ItemStackCreator {
         meta.setMaxStackSize(itemData.stackAmount)
         meta.displayName(itemData.name.component)
         meta.lore(figureOutLore(itemData))
-        meta.persistentDataContainer[NamespacedKey.fromString("id", plugin)!!, PersistentDataType.INTEGER] = itemData.id
+        meta.persistentDataContainer[NamespacedKey.fromString("id", plugin)!!, PersistentDataType.STRING] = itemData.name
 
         item.itemMeta = meta
         return item

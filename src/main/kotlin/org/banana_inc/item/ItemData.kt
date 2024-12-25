@@ -19,7 +19,6 @@ sealed class ItemData(
     open val itemType: ItemMaterial = ItemMaterial.ITEM
     open val stackAmount = 64
     var name: String
-
     interface Magical
     sealed class Ammunition(currency: Currency, weight: Weight): ItemData(currency, weight){
         override val itemType = ItemMaterial.AMMO
@@ -125,12 +124,18 @@ sealed class ItemData(
     companion object {
         private val items = MutableClassToInstanceMap.create<ItemData>()
 
+        private val itemNameToItem: HashMap<String, ItemData> by lazy {
+            val map = HashMap<String, ItemData>()
+            for(i in items){
+                map[i.value.name] = i.value
+            }
+            map
+        }
+
         val sortedItemClasses: List<Class<out ItemData>> by lazy {
             items.keys.sortedBy{ it.simpleName }
         }
-        val sortedItemsByID: List<ItemData> by lazy {
-            items.values.sortedBy { it.id }
-        }
+
 
         init {
             logger.info("companion called")
@@ -140,8 +145,8 @@ sealed class ItemData(
             return id.cast(items[id] ?: error("No such item: $id"))
         }
 
-        operator fun get(id: Int): ItemData {
-            return sortedItemsByID[id]
+        operator fun get(id: String): ItemData? {
+            return itemNameToItem[id]
         }
 
         fun getAll(): Set<ItemData> {
@@ -156,12 +161,9 @@ sealed class ItemData(
         }
     }
 
-    val id: Int
-        get() = run { sortedItemClasses.indexOf(this.javaClass) }
-
     init {
         items[this.javaClass] = this
-        this.name = this.javaClass.simpleName.replace(Regex("(?<=[a-zA-Z])(?=[A-Z])"), " ")
+        this.name = this.javaClass.simpleName.replace(Regex("(?<=[a-zA-Z])(?=[A-Z])"), "_").lowercase()
 
     }
 

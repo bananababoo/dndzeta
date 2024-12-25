@@ -34,6 +34,10 @@ class ItemViewer(player: Player): GUI(player.data) {
             ItemViewerItem(ItemData[it].create(), this)
     }.toList()
 
+
+
+
+
     private val gui = PagedGui.items()
         .setStructure(
             ". . . . . . . . .",

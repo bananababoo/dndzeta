@@ -219,10 +219,10 @@ val ItemStack.toItem: Item<*>
     get() {
         logger.info(itemMeta.toString())
     return useMeta {
-        val id = persistentDataContainer[ItemStackCreator.idKey, PersistentDataType.INTEGER] ?: error("no id")
+        val id = persistentDataContainer[ItemStackCreator.idKey, PersistentDataType.STRING] ?: error("no id")
         val modifiers = persistentDataContainer[ItemStackCreator.modifiersKey, PersistentDataType.STRING]
 
-        ItemData[id].create().apply {
+        ItemData[id]!!.create().apply {
             if(modifiers != null) {
                 this.modifiers.addAll(
                     plugin.gson.fromJson<Collection<Modifier<ItemData>>>(

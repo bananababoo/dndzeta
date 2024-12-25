@@ -1,17 +1,3 @@
-add custom stack amount stuff
-check for illigal stackability on items outside of editor, including giving items to player from the editor
-
-redo item viewer w/ updated code (import gui lib???)
-
-make gui based item creator, convert all items to that, using formats defined already
-- save stuff to remote
-
-resource pack custom icon / font system for icons
-
-the rest of the items
-
-item textures: https://www.youtube.com/watch?v=FIOXGWCQgAI
-
 quodona, auto add gradle.properties as part of the task from a secret
 
 upgrade resource pack system to beable to do mutli resource packs
@@ -30,6 +16,12 @@ more item attributes (custom lore, custom nane...)
 
 admin item commands, attribute editor / clone / save / backpacks?
 
+the rest of the items
+
+add item textures (no armor yet)
+
+resource pack python generator
+
 item textures
 
 figure out stack item calculation (if i have 5 coins, weight should be sum, cost should be sum)
@@ -38,3 +30,6 @@ item lore
 -
 
 ai?
+
+resource pack custom icon / font system for icons
+
