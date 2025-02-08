@@ -2,7 +2,7 @@
 acf = "1.0.0"
 classgraph = "4.8.179"
 creative = "1.7.3"
-googleAuth = "1.32.0"
+googleAuth = "1.32.1"
 googleClient = "2.7.2"
 googleDrive = "v3-rev20250122-2.0.0"
 googleOauth = "1.37.0"
