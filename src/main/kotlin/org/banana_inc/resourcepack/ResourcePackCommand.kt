@@ -14,7 +14,7 @@ object ResourcePackCommand: BaseCommand(){
     @CommandPermission("zeta.resourcepack.reload")
     fun reload() {
         logger.info("Reloading resource pack")
-        ResourcePackProvider.reloadResourcePackAsync(true)
+        ResourcePackProvider.reloadResourcePackAsync()
     }
 
 }

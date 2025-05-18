@@ -12,12 +12,13 @@ import com.zorbeytorunoglu.kLib.task.Repeat
 import io.papermc.paper.event.player.AsyncChatEvent
 import org.banana_inc.EventManager
 import org.banana_inc.chat.MultiLineEditor
+import org.banana_inc.config.ServerConfig
 import org.banana_inc.data.DatabaseActions
 import org.banana_inc.extensions.*
 import org.banana_inc.item.EnchantmentType
-import org.banana_inc.item.ItemData
-import org.banana_inc.item.ItemData.Weapon.Melee.Martial.Halberd.create
 import org.banana_inc.item.Modifier
+import org.banana_inc.item.data.Weapon
+import org.banana_inc.item.data.Weapon.Melee.Martial.Halberd.create
 import org.banana_inc.logger
 import org.banana_inc.util.ContextResolver
 import org.banana_inc.util.storage.StorageToken
@@ -104,13 +105,13 @@ object Command: BaseCommand() {
 
     @Subcommand("beep")
     fun bop(p: Player){
-        val gun = ItemData.Weapon.Ranged.Martial.Gun.Blowgun.create()
+        val gun = Weapon.Ranged.Martial.Gun.Blowgun.create()
         gun.modifiers.add(Modifier.Enchantment(EnchantmentType.SPEEDY, 1))
         p.data.inventory[0] = gun
         DatabaseActions.updateThenAsync(p.data) {
             val i = p.data.inventory[0] ?: error("item not found")
             sendMessage(p,"id: ${i.type.name}")
-            if (i.type is ItemData.Weapon.Ranged)
+            if (i.type is Weapon.Ranged)
                 sendMessage(p, i.type.damageDice.toString())
 
         }
@@ -126,6 +127,11 @@ object Command: BaseCommand() {
     @Subcommand("inventory")
     fun inventory(player: Player){
         player.sendMessage(player.data.inventory.toString())
+    }
+
+    @Subcommand("config reload")
+    fun reloadConfig(){
+        ServerConfig.reload()
     }
 
 }

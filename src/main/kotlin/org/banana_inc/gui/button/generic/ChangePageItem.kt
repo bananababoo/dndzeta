@@ -1,10 +1,10 @@
-package org.banana_inc.gui
+package org.banana_inc.gui.button.generic
 
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.ClickType
+import xyz.xenondevs.invui.Click
 import xyz.xenondevs.invui.item.AbstractPagedGuiBoundItem
-import xyz.xenondevs.invui.item.Click
 import xyz.xenondevs.invui.item.ItemBuilder
 import xyz.xenondevs.invui.item.ItemProvider
 
@@ -17,10 +17,10 @@ class ChangePageItem : AbstractPagedGuiBoundItem() {
     }
 
     override fun handleClick(clickType: ClickType, p1: Player, p2: Click) {
-        if (clickType == ClickType.LEFT) {
-            gui.goForward() // go one page forward on left-click
+        if (clickType == ClickType.LEFT){
+            gui.page += 1 // go one page forward on left-click
         } else if (clickType == ClickType.RIGHT) {
-            gui.goBack() // go one page back on right-click
+            gui.page -= 1 // go one page back on right-click
         }
     }
 

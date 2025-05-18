@@ -1,5 +1,6 @@
 package org.banana_inc.data
 
+import com.google.common.collect.HashBiMap
 import com.mongodb.client.model.Filters
 import com.mongodb.client.model.ReplaceOneModel
 import com.zorbeytorunoglu.kLib.task.Scopes
@@ -14,34 +15,42 @@ object DatabaseActions {
 
     fun loadAll() {
         for (dataClass in Data::class.sealedSubclasses) {
-            Data.serverDataLists[dataClass] =
-                if (dataClass.hasAnnotation<Data.LoadOnStartup>())
-                    Database.getCollection(dataClass).find().filterIsInstance<Data>().toMutableSet()
-                else
-                    mutableSetOf<Data>().apply { logger.info("database loaded ${dataClass.simpleName}") }
+            val map = HashBiMap.create<UUID, Data>()
+
+            Data.dataLists[dataClass] =
+                if (dataClass.hasAnnotation<Data.LoadOnStartup>()) {
+                    val values = Database.getCollection(dataClass).find().toMutableSet().requireNoNulls()
+                    values.forEach { map[it.uuid] = it }
+                    map
+                } else {
+                    map.apply { logger.info("database loaded ${dataClass.simpleName}") }
+                }
         }
     }
 
     inline fun <reified T : Data> load() {
-        Data.serverDataLists[T::class] = Database.getCollection<T>()
-            .find().filterIsInstance<Data>().toMutableSet()
+        val values = Database.getCollection<T>().find().requireNoNulls().toMutableSet()
+        val map = HashBiMap.create<UUID, Data>()
+        values.forEach { map[it.uuid] = it }
+
+        Data.dataLists[T::class] = map
     }
 
     inline fun <reified T : Data> load(uuid: UUID): T? {
         val data: List<T> = Database.getCollection<T>().find(Filters.eq("_id", uuid)).filterIsInstance<T>()
         if (data.isEmpty()) return null
         else if (data.size > 1) error("UHHH OHHHHHHHHHHHHH multiple items with same uuid")
-        Data.serverDataLists[T::class] = data.toMutableSet()
+        Data.dataLists[T::class]?.put(uuid,data.first())
         return data[0]
     }
 
     inline fun <reified T : Data> save() {
-        update(*(Data.serverDataLists[T::class] as MutableSet<Data>).toTypedArray())
+        update(*(Data.dataLists[T::class]?.values as MutableSet<Data>).toTypedArray())
     }
 
     fun saveAll() {
-        Data.serverDataLists.values.forEach {
-            update(*it.toTypedArray())
+        Data.dataLists.values.forEach {
+            update(*it.values.toTypedArray())
         }
     }
 
@@ -50,14 +59,16 @@ object DatabaseActions {
         val result = Database.getCollection<T>().insertMany(objects.toList())
         checkNotNull(result) { "null when inserting collection $objects into collection ${T::class.simpleName}" }
         check(result.wasAcknowledged()) { "database insert not acknowledged when inserting collection $objects into collection ${T::class.simpleName}" }
-        val data: MutableSet<Data> = Data.serverDataLists[T::class]
+        val data = Data.dataLists[T::class]
             ?: throw IllegalStateException("Tried to get DataList that doesn't exist (shouldn't be possible) ${T::class.simpleName}")
-        data.addAll(objects)
+        for(obj in objects){
+            data[obj.uuid] = obj
+        }
     }
 
     private inline fun <reified T : Data> add(obj: Array<out T>) {
         if (obj.isEmpty()) return
-        val data: MutableSet<Data> = Data.serverDataLists[T::class]
+        val data: MutableSet<Data> = Data.dataLists[T::class]?.values
             ?: throw IllegalStateException("Tried to get DataList that doesn't exist (shouldn't be possible) ${T::class.simpleName}")
         data.addAll(obj)
     }

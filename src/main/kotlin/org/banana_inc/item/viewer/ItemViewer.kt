@@ -4,20 +4,20 @@ import org.banana_inc.extensions.addItem
 import org.banana_inc.extensions.component
 import org.banana_inc.extensions.data
 import org.banana_inc.extensions.useMeta
-import org.banana_inc.gui.ChangePageItem
-import org.banana_inc.gui.ClickToGetItem
-import org.banana_inc.gui.GUI
+import org.banana_inc.gui.base.GUI
+import org.banana_inc.gui.button.generic.ChangePageItem
+import org.banana_inc.gui.button.generic.ClickToGetItem
 import org.banana_inc.item.Item
-import org.banana_inc.item.ItemData
-import org.banana_inc.item.ItemData.Weapon.Melee.Simple.Handaxe.create
+import org.banana_inc.item.data.ItemData
+import org.banana_inc.item.data.Weapon.Melee.Simple.Handaxe.create
 import org.banana_inc.util.initialization.InitOnStartup
 import org.banana_inc.util.reflection.ClassReflection
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.ClickType
 import org.bukkit.inventory.ItemStack
+import xyz.xenondevs.invui.Click
 import xyz.xenondevs.invui.gui.*
-import xyz.xenondevs.invui.item.Click
 import xyz.xenondevs.invui.item.ItemBuilder
 import xyz.xenondevs.invui.window.AnvilWindow
 
@@ -34,11 +34,7 @@ class ItemViewer(player: Player): GUI(player.data) {
             ItemViewerItem(ItemData[it].create(), this)
     }.toList()
 
-
-
-
-
-    private val gui = PagedGui.items()
+    private val gui = PagedGui.itemsBuilder()
         .setStructure(
             ". . . . . . . . .",
             ". . . . . . . . .",
@@ -52,7 +48,6 @@ class ItemViewer(player: Player): GUI(player.data) {
         .build()
 
     private var query = ""
-
     private var inStorage = mutableListOf<ItemViewerItem>()
 
     private fun updateItems(player: Player? = null){
@@ -61,7 +56,7 @@ class ItemViewer(player: Player): GUI(player.data) {
             else allItems.filter {
                     it.item.type.name.contains(query, ignoreCase = true)
                 }
-        gui.setContent(items)
+        gui.content = items
         gui.apply {
             (1..7).forEach { index ->
                 gui[27 + index] = xyz.xenondevs.invui.item.Item.simple (
@@ -83,10 +78,11 @@ class ItemViewer(player: Player): GUI(player.data) {
         }
     }
 
-    private var window = AnvilWindow.split().apply {
+    private var window = AnvilWindow.builder().apply {
+
         setViewer(player)
         setTitle("InvUI")
-        setUpperGui(Gui.normal()
+        setUpperGui(Gui.builder()
             .setStructure("a a a")
             .addIngredient('a', ItemStack(Material.LIGHT_GRAY_STAINED_GLASS_PANE)
                 .apply {

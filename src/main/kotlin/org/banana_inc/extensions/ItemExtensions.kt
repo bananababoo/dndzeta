@@ -2,11 +2,10 @@ package org.banana_inc.extensions
 
 import net.kyori.adventure.text.Component
 import org.banana_inc.item.Item
-import org.banana_inc.item.ItemData
-import org.banana_inc.item.ItemData.Weapon.Melee.Simple.Handaxe.create
 import org.banana_inc.item.ItemStackCreator
 import org.banana_inc.item.Modifier
-import org.banana_inc.logger
+import org.banana_inc.item.data.ItemData
+import org.banana_inc.item.data.Weapon.Melee.Simple.Handaxe.create
 import org.banana_inc.plugin
 import org.bukkit.Bukkit
 import org.bukkit.Material
@@ -26,14 +25,15 @@ var ItemMeta.name: Component?
     get() = if (hasDisplayName()) displayName() else null
     set(value) { displayName(value ?: Component.empty()) }
 
-fun ItemStack.changeMeta(action: (ItemMeta).() -> Unit) {
+fun ItemStack.changeMeta(action: (ItemMeta).() -> Unit): ItemStack {
     val meta = (if (this.hasItemMeta()) this.itemMeta else Bukkit.getItemFactory().getItemMeta(this.type))!!
     action(meta)
     itemMeta = meta
+    return this
 }
 
 fun <T> ItemStack.useMeta(action: (ItemMeta).() -> T): T {
-    val meta = (if (this.hasItemMeta()) this.itemMeta else Bukkit.getItemFactory().getItemMeta(this.type))!!
+    val meta = if (this.hasItemMeta()) this.itemMeta else Bukkit.getItemFactory().getItemMeta(this.type)
     val result: T = action(meta)
     itemMeta = meta
     return result
@@ -217,8 +217,10 @@ val Material.isMineCart: Boolean get() = name.endsWith("_MINECART")
 @OptIn(ExperimentalStdlibApi::class)
 val ItemStack.toItem: Item<*>
     get() {
-        logger.info(itemMeta.toString())
-    return useMeta {
+        if(type == Material.AIR) throw IllegalStateException("Air isn't an item")
+        if(itemMeta == null) throw IllegalStateException("Item: $type has null item meta")
+
+        return useMeta {
         val id = persistentDataContainer[ItemStackCreator.idKey, PersistentDataType.STRING] ?: error("no id")
         val modifiers = persistentDataContainer[ItemStackCreator.modifiersKey, PersistentDataType.STRING]
 
@@ -231,7 +233,7 @@ val ItemStack.toItem: Item<*>
                     ).toList()
                 )
             }
-            this@apply.amount = this@toItem.amount
+            amount = this@toItem.amount
         }
     }
 }

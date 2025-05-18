@@ -1,7 +1,7 @@
 name: dndzeta
 version: '${version}'
 main: org.banana_inc.DndZeta
-api-version: '1.21.4'
+api-version: '1.21.5'
 commands:
   test:
     description: test

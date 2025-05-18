@@ -29,7 +29,7 @@ object SessionHandler {
         EventManager.addListener<PlayerJoinEvent>{
             //---Inventory---
             player.inventory.clear()
-            for (item in player.data.inventory) {
+            for (item in player.data.inventory.items) {
                 player.inventory.setItem(item.key, item.value.itemStack())
             }
         }

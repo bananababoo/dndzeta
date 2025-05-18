@@ -8,7 +8,6 @@ import org.bukkit.event.Cancellable
 import org.bukkit.event.Event
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
-import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.player.PlayerAdvancementDoneEvent
 import org.bukkit.event.player.PlayerLoginEvent
 import java.util.concurrent.ConcurrentHashMap
@@ -30,9 +29,6 @@ object EventManager: Listener {
         for(i in ClassGraph.allBukkitEventClasses){
             pm.registerEvent(i,this, EventPriority.HIGH, { _, event ->
                 if(!i.isInstance(event)) return@registerEvent
-                if(event::class == InventoryClickEvent::class){
-                    logger.info("clickevent: $event" + " ${event::class}" + " $i")
-                }
                 if (event is Cancellable && canceledEvents.contains(event::class))
                     event.isCancelled = true
                 handleEvent(event)
@@ -77,12 +73,8 @@ object EventManager: Listener {
 
     private fun handleEvent(event: Event) {
         val handlers = events[event::class]
-        if(handlers != null){
-            logger.info("event: ${event::class}: $event")
-        }
         for (handler in handlers?: return) {
             handler(event)
-            logger.info("event2: ${event::class}: $event")
         }
     }
 

@@ -7,6 +7,10 @@ data class Weight(var lb: Int, var oz: Double) {
         }
     }
 
+    fun asLbs(): Double{
+        return lb + (oz/16)
+    }
+
     operator fun plus(other: Weight) = Weight(lb + other.lb, oz + other.oz)
 
 }

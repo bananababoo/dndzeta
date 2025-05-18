@@ -65,7 +65,7 @@ fun JavaPlugin.sync(function: () -> Unit): BukkitTask {
 }
 
 
-fun JavaPlugin.nextTick(function: () -> Unit): BukkitTask {
+infix fun JavaPlugin.nextTick(function: () -> Unit): BukkitTask {
     return this.server.scheduler.runTask(this, function)
 }
 

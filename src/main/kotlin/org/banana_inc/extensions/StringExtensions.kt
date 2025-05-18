@@ -15,7 +15,11 @@ import java.util.regex.Pattern
 
 
 val String.component get(): Component {
-    return MiniMessage.miniMessage().deserialize(this)
+    var new = replace("<bold>", "<font:dndzeta:bold>")
+    new = new.replace("<italic>", "<font:dndzeta:italic>")
+    new = new.replace("<bold-italic>", "<font:dndzeta:italic>")
+    val message = MiniMessage.miniMessage().deserialize(new)
+    return message
 }
 
 fun String.clickableComponent(onClick: () -> Unit): Component {

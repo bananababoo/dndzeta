@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.DeserializationContext
 import com.fasterxml.jackson.databind.JsonDeserializer
 import com.fasterxml.jackson.databind.JsonSerializer
 import com.fasterxml.jackson.databind.SerializerProvider
+import org.banana_inc.item.data.ItemData
 import kotlin.reflect.KClass
 
 class ItemSerializer : JsonSerializer<ItemData>() {

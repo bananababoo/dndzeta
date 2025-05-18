@@ -1,9 +1,13 @@
+@file:Suppress("unused")
+
 package org.banana_inc.data
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
+import com.google.common.collect.HashBiMap
+import org.banana_inc.config.ServerConfig
 import org.banana_inc.item.Item
 import org.bson.codecs.pojo.annotations.BsonId
 import org.bukkit.Bukkit
@@ -24,20 +28,26 @@ sealed class Data{
     @SuppressWarnings("PropertyName")
     open val uuid: UUID = UUID.randomUUID()
 
+    annotation class LoadOnStartup
     companion object {
-        val serverDataLists: MutableMap<KClass<out Data>, MutableSet<Data>> = mutableMapOf()
-        inline fun <reified T : Data> get(): List<T> {
-            return serverDataLists[T::class]?.filterIsInstance<T>() ?: error("No such DataList: ${T::class.simpleName}")
+        val dataLists: MutableMap<KClass<out Data>, HashBiMap<UUID, Data>> = mutableMapOf()
+        @Suppress("unchecked_cast")
+        inline fun <reified T : Data> getMap(): HashBiMap<UUID,T> {
+            return dataLists[T::class] as? HashBiMap<UUID,T>? ?: error("No such DataList: ${T::class.simpleName}")
         }
+
+        inline fun <reified T : Data> get(): MutableSet<T> {
+            return getMap<T>().values
+        }
+
         inline fun <reified T : Data> get(id: UUID): T? {
-            return get<T>().find { it.uuid == id }
+            return getMap<T>()[id]
         }
         inline fun <reified T : Data> unload(uuid: UUID) {
-            serverDataLists[T::class]?.remove(get<T>(uuid)!!)
+            dataLists[T::class]?.remove(uuid)
         }
     }
 
-    annotation class LoadOnStartup
     data class Player(
         @JsonProperty("_id")
         @BsonId
@@ -45,10 +55,16 @@ sealed class Data{
         @JsonDeserialize(using = UUIDBinaryDeserializer::class)
         override val uuid: UUID,
         var money: Long = 0,
-        var inventory: MutableMap<Int, Item<*>> = mutableMapOf()
+        var inventory: Inventory = Inventory(36),
+        var settings: Settings = Settings(),
     ) : Data(){
         @JsonIgnore
         val localData = Local()
+
+        data class Settings(
+            val resourcePackOptions: MutableSet<ServerConfig.ResourcePackConfig.Data> = mutableSetOf()
+        )
+
         @DatabaseUpdateListener("money")
         fun updateMoney(){
             Bukkit.getPlayer(uuid)!!.sendMessage("money changed: $money")
@@ -59,12 +75,28 @@ sealed class Data{
             Bukkit.getPlayer(uuid)!!.sendMessage("old inventory: $old")
         }
 
+
         /**
          * This Data does not need to be saved, and can be safely removed on login
          */
         data class Local(
             var inGUI: Boolean = false
         )
+    }
+    data class Inventory(
+        val size: Int,
+        val items: MutableMap<Int, Item<*>> = mutableMapOf(),
+    ){
+        fun clear() = items.clear()
+        @JsonIgnore
+        operator fun set(slot: Int, item: Item<*>) {
+            if(slot + 1 > size) throw IllegalStateException("Can't set slot $slot in data inv with size $size")
+            items[slot] = item
+        }
+        @JsonIgnore
+        operator fun get(slot: Int) = items[slot]
+        fun remove(slot: Int) = items.remove(slot)
+        override fun toString() = items.toString()
     }
 }
 

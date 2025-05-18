@@ -12,7 +12,12 @@ open class DndZeta : JavaPlugin() {
 
     override fun onEnable() {
         plugin = this
-        (logger.also { org.banana_inc.logger = it })
+        org.banana_inc.logger = plugin.logger
+        saveDefaultConfig()
+        init()
+    }
+
+    fun init(){
         for (initOnStartupClass in ClassGraph.initOnStartupClasses) {
             initOnStartupClass.objectInstance
         }

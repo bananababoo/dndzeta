@@ -2,7 +2,7 @@ package org.banana_inc.resourcepack
 
 import net.kyori.adventure.key.Key
 import org.banana_inc.extensions.component
-import org.banana_inc.item.ItemData
+import org.banana_inc.item.data.ItemData
 import org.banana_inc.plugin
 import team.unnamed.creative.BuiltResourcePack
 import team.unnamed.creative.ResourcePack
@@ -29,7 +29,10 @@ object ResourcePackGenerator {
                     .lowercase()
                     .replace(" ", "_")
                     .replace(Regex("[^a-z0-9_.-]"), "")
-                val clazz = ItemData.getClasses().find { it.simpleName.equals(image.nameWithoutExtension, ignoreCase = true) } ?: continue
+                val clazz = ItemData.getClasses().find{
+                    it.simpleName.equals(image.nameWithoutExtension, ignoreCase = true)
+                } ?: continue
+
                 val data = ItemData[clazz]
 
                 resourcePackBuilder.texture(
@@ -39,26 +42,23 @@ object ResourcePackGenerator {
                         .build()
                 )
 
-
                 resourcePackBuilder.model(
                     Model.model()
                     .key( Key.key("dndzeta", "item/${data.name}"))
                     .parent(Key.key("minecraft","item/handheld"))
                     .textures(
                         ModelTextures.builder().layers(
-                            ModelTexture.ofKey( Key.key("dndzeta", "item/${data.name}"))
+                            ModelTexture.ofKey(Key.key("dndzeta", "item/${data.name}"))
                         ).build()
                     )
                     .build()
                 )
 
                 //waiting on https://github.com/unnamed/creative/issues/74
-
             }
         }
 
         val resourcePack = MinecraftResourcePackWriter.minecraft().build(resourcePackBuilder)
-        ResourcePackProvider.hash = resourcePack.hash()
         return resourcePack
     }
 

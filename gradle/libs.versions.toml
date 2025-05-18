@@ -2,14 +2,10 @@
 acf = "1.0.0"
 classgraph = "4.8.179"
 creative = "1.7.3"
-googleAuth = "1.34.0"
-googleClient = "2.7.2"
-googleDrive = "v3-rev20250506-2.0.0"
-googleOauth = "1.39.0"
 guava = "33.4.8-jre"
-jackson = "2.19.0"
+jackson = "2.18.2"
 kmongo = "5.2.1"
-kotlin = "2.2.0-Beta2"
+kotlin = "2.1.0"
 kotlinx = "1.10.2"
 kyori = "4.21.0"
 logback = "1.5.18"
@@ -17,7 +13,7 @@ mockbukkit = "4.48.0"
 mockk = "1.14.2"
 mongodb = "5.5.0"
 mongojack = "5.0.2"
-paper = "1.21.4-R0.1-SNAPSHOT"
+paper = "1.21.5-R0.1-SNAPSHOT"
 xyz-xenondevs-invui = "2.0.0-alpha.12"
 
 [libraries]
@@ -26,15 +22,12 @@ adventure-extra-kotlin = { module = "net.kyori:adventure-extra-kotlin", version.
 classgraph = { module = "io.github.classgraph:classgraph", version.ref = "classgraph" }
 creative-api = { module = "team.unnamed:creative-api", version.ref = "creative" }
 creative-serializer = { module = "team.unnamed:creative-serializer-minecraft", version.ref = "creative" }
-google-api-client = { module = "com.google.api-client:google-api-client", version.ref = "googleClient" }
-google-api-client-jackson = { module = "com.google.api-client:google-api-client-jackson2", version.ref = "googleClient" }
-google-api-oauth-client-jetty = { module = "com.google.oauth-client:google-oauth-client-jetty", version.ref = "googleOauth" }
-google-auth = { module = "com.google.auth:google-auth-library-oauth2-http", version.ref = "googleAuth" }
-google-drive = { module = "com.google.apis:google-api-services-drive", version.ref = "googleDrive" }
 guava = { module = "com.google.guava:guava", version.ref = "guava" }
 invui = { module = "xyz.xenondevs.invui:invui", version.ref = "xyz-xenondevs-invui" }
 invui-kotlin = { module = "xyz.xenondevs.invui:invui-kotlin", version.ref = "xyz-xenondevs-invui" }
 jackson = { module = "com.fasterxml.jackson.core:jackson-core", version.ref = "jackson" }
+jackson-yaml = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml", version.ref = "jackson"}
+jackson-annotations = { module = "com.fasterxml.jackson.core:jackson-annotations", version.ref = "jackson" }
 kmongo = { module = "org.litote.kmongo:kmongo", version.ref = "kmongo" }
 kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin" }
 kotlin-script-runtime = { module = "org.jetbrains.kotlin:kotlin-script-runtime", version.ref = "kotlin" }

@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.json.JsonMapper
 import com.fasterxml.jackson.databind.module.SimpleModule
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.KotlinFeature
-import com.fasterxml.jackson.module.kotlin.KotlinModule
+import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import com.mongodb.ConnectionString
 import com.mongodb.MongoClientSettings
 import com.mongodb.ServerApi
@@ -20,9 +20,9 @@ import com.mongodb.client.model.changestream.OperationType
 import com.zorbeytorunoglu.kLib.task.Scopes
 import kotlinx.coroutines.launch
 import me.bananababoo.dndzeta.BuildConfig
-import org.banana_inc.item.ItemData
 import org.banana_inc.item.ItemDeserializer
 import org.banana_inc.item.ItemSerializer
+import org.banana_inc.item.data.ItemData
 import org.banana_inc.logger
 import org.banana_inc.util.initialization.InitOnStartup
 import org.banana_inc.util.reflection.FieldReflection
@@ -44,7 +44,10 @@ object Database {
         .configure(MapperFeature.USE_GETTERS_AS_SETTERS, true).build()
         .apply {
             registerModule(JavaTimeModule())
-            registerModule(KotlinModule.Builder().enable(KotlinFeature.StrictNullChecks).build())
+            registerKotlinModule {
+                enable(KotlinFeature.StrictNullChecks)
+                enable(KotlinFeature.KotlinPropertyNameAsImplicitName)
+            }
             registerModules(
                 SimpleModule().apply {
                     addSerializer(ItemData::class.java, ItemSerializer())  // Register serializer
@@ -69,14 +72,13 @@ object Database {
 
             postInit()
         }
-
     }
 
     private fun postInit() {
         enablePreImagesAll()
         DatabaseActions.loadAll()
         val session = client.startSession()
-        Data.serverDataLists.keys.forEach { serverDataList ->
+        Data.dataLists.keys.forEach { serverDataList ->
             val col = getCollection(serverDataList)
             val insertChanges = serverDataList.hasAnnotation<Data.LoadOnStartup>()
             Scopes.ioScope.launch {
@@ -107,7 +109,7 @@ object Database {
     }
 
     private fun handleOperation(change: ChangeStreamDocument<out Data>, insertChanges: Boolean, serverDataList: KClass<out Data>) {
-        val list = Data.serverDataLists[serverDataList]!!
+        val list = Data.dataLists[serverDataList]!!.values
         val newDoc: Data = change.fullDocument!!
         logger.info("doing change with type ${change.operationType}")
         when (change.operationType) {

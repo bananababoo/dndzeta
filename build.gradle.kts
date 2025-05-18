@@ -1,6 +1,6 @@
 plugins {
-    kotlin("jvm") version "2.1.0-Beta2" // Replace with your actual Kotlin version
-    id("com.gradleup.shadow") version "8.3.5"
+    kotlin("jvm") version "2.1.0" // Replace with your actual Kotlin version
+    id("com.gradleup.shadow") version "9.0.0-beta4"
     id("com.github.gmazzo.buildconfig") version "5.5.0"
     id("com.github.ben-manes.versions") version "0.51.0"
     id("nl.littlerobots.version-catalog-update") version "0.8.5"
@@ -26,6 +26,7 @@ dependencies {
     implementation(libs.guava)
     implementation(libs.mongo.bson)
     implementation(libs.jackson)
+    implementation(libs.jackson.yaml)
     //database
     implementation(libs.mongo.jackdriver)
     implementation(libs.kmongo)
@@ -39,12 +40,6 @@ dependencies {
     //resource pack
     implementation(libs.creative.api)
     implementation(libs.creative.serializer)
-    //google drive stuff
-    implementation(libs.google.api.client)
-    implementation(libs.google.api.client.jackson)
-    implementation(libs.google.api.oauth.client.jetty)
-    implementation(libs.google.drive)
-    implementation(libs.google.auth)
 
     testImplementation(kotlin("test"))
 }
@@ -74,7 +69,6 @@ tasks.compileJava {
     options.forkOptions.executable = "${System.getProperty("java.home")}/bin/javac.exe"
 }
 
-
 tasks.processResources {
     val props = mapOf("version" to version)
     inputs.properties(props)
@@ -90,13 +84,14 @@ tasks.test {
 }
 
 tasks.shadowJar {
-    destinationDirectory = file(providers.gradleProperty("build.outputPath"))
-}
-
-tasks.shadowJar {
     relocate("co.aikar.commands", "org.banana_inc.acf")
     relocate("co.aikar.locales", "org.banana_inc.locales")
     relocate("ink.pmc.advkt", "com.example.libs.advkt")
+    relocate("com.fasterxml.jackson", "org.banana_inc.jackson")
+
+    mergeServiceFiles()
+    destinationDirectory = file(providers.gradleProperty("build.outputPath"))
+
 }
 
 tasks.build {
@@ -106,9 +101,5 @@ tasks.build {
 buildConfig {
     buildConfigField("databaseUsername", providers.gradleProperty("database.username"))
     buildConfigField("databasePassword", providers.gradleProperty("database.password"))
-    buildConfigField("gdriveAuth", providers.gradleProperty("gdriveauth"))
-
 }
-
-
 

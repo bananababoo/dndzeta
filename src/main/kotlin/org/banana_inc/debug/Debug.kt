@@ -21,8 +21,15 @@ fun sendDebugMessage(mode: DebugType, message: String){
 }
 
 fun sendDebugMessage(mode: DebugType, player: HumanEntity, message: String){
-    if(player.tempStorage[token] != null && player.tempStorage[token]!!.containsKey(mode)){
+    if (player.tempStorage[token] != null && player.tempStorage[token]!!.containsKey(mode)) {
         sendMessage(player, "<gray>[Debug-$mode]: <white>$message")
     }
+}
 
+fun sendDebugMessage(mode: DebugType, players: List<HumanEntity>, message: String){
+    for(player in players) {
+        if (player.tempStorage[token] != null && player.tempStorage[token]!!.containsKey(mode)) {
+            sendMessage(player, "<gray>[Debug-$mode]: <white>$message")
+        }
+    }
 }

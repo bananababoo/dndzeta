@@ -1,0 +1,7 @@
+resource_packs:
+  default:
+    url: "abc"
+    hash: "123"
+  music:
+    url: "123"
+    hash: "abc"

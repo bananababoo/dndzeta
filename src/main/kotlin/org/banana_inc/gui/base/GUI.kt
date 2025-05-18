@@ -1,8 +1,9 @@
-package org.banana_inc.gui
+package org.banana_inc.gui.base
 
 import org.banana_inc.data.Data
 
-open class GUI(val player: Data.Player) {
+abstract class GUI(val player: Data.Player) {
+
     init {
         player.localData.inGUI = true
     }

@@ -254,7 +254,9 @@ fun sendMessage(player: HumanEntity, message: Component){
 
 val HumanEntity.data: Data.Player
     get() {
-        val playerData = Data.get<Data.Player>().find { it.uuid == uniqueId }
+        val playerData = Data.get<Data.Player>(uniqueId)
         return playerData ?: Data.Player(uniqueId).apply { DatabaseActions.store(this) }
     }
+
+
 

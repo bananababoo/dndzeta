@@ -1,10 +1,9 @@
 package org.banana_inc.item.attributes.weapon
 
-import org.banana_inc.item.ItemData
 import org.banana_inc.util.dnd.Dice
 
 sealed class WeaponProperty(val weaponPropertyType: WeaponPropertyType) {
-    class Ammunition(val range: WeaponRange, val ammunition: ItemData.Ammunition): WeaponProperty(WeaponPropertyType.AMMUNITION)
+    class Ammunition(val range: WeaponRange, val ammunition: org.banana_inc.item.data.Ammunition): WeaponProperty(WeaponPropertyType.AMMUNITION)
     data object Finesse: WeaponProperty(WeaponPropertyType.FINESSE)
     data object Heavy: WeaponProperty(WeaponPropertyType.HEAVY)
     data object Improvised: WeaponProperty(WeaponPropertyType.IMPROVISED)
