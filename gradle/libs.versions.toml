@@ -3,9 +3,9 @@ acf = "1.0.0"
 classgraph = "4.8.179"
 creative = "1.7.3"
 guava = "33.4.8-jre"
-jackson = "2.18.2"
+jackson = "2.19.0"
 kmongo = "5.2.1"
-kotlin = "2.1.0"
+kotlin = "2.2.0-RC"
 kotlinx = "1.10.2"
 kyori = "4.21.0"
 logback = "1.5.18"
@@ -26,8 +26,7 @@ guava = { module = "com.google.guava:guava", version.ref = "guava" }
 invui = { module = "xyz.xenondevs.invui:invui", version.ref = "xyz-xenondevs-invui" }
 invui-kotlin = { module = "xyz.xenondevs.invui:invui-kotlin", version.ref = "xyz-xenondevs-invui" }
 jackson = { module = "com.fasterxml.jackson.core:jackson-core", version.ref = "jackson" }
-jackson-yaml = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml", version.ref = "jackson"}
-jackson-annotations = { module = "com.fasterxml.jackson.core:jackson-annotations", version.ref = "jackson" }
+jackson-yaml = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml", version.ref = "jackson" }
 kmongo = { module = "org.litote.kmongo:kmongo", version.ref = "kmongo" }
 kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin" }
 kotlin-script-runtime = { module = "org.jetbrains.kotlin:kotlin-script-runtime", version.ref = "kotlin" }
