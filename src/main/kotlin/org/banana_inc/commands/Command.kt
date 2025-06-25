@@ -7,24 +7,31 @@ import co.aikar.commands.annotation.CommandAlias
 import co.aikar.commands.annotation.Default
 import co.aikar.commands.annotation.Subcommand
 import com.destroystokyo.paper.ParticleBuilder
+import com.fasterxml.jackson.module.kotlin.readValue
 import com.zorbeytorunoglu.kLib.task.CancelableTask
 import com.zorbeytorunoglu.kLib.task.Repeat
 import io.papermc.paper.event.player.AsyncChatEvent
 import org.banana_inc.EventManager
+import org.banana_inc.chat.ComplexTypedMultiLineEditor
 import org.banana_inc.chat.MultiLineEditor
 import org.banana_inc.config.ServerConfig
+import org.banana_inc.data.Database
 import org.banana_inc.data.DatabaseActions
-import org.banana_inc.extensions.*
-import org.banana_inc.item.EnchantmentType
+import org.banana_inc.extensions.data
+import org.banana_inc.extensions.radiusAsyncCached
+import org.banana_inc.extensions.relativeOffset
+import org.banana_inc.extensions.sendMessage
+import org.banana_inc.item.EnchantmentModifier
 import org.banana_inc.item.Modifier
-import org.banana_inc.item.data.Weapon
-import org.banana_inc.item.data.Weapon.Melee.Martial.Halberd.create
+import org.banana_inc.item.items.Weapon
+import org.banana_inc.item.items.Weapon.Melee.Martial.Halberd.create
 import org.banana_inc.logger
+import org.banana_inc.mechanics.dice.DiceRoll
 import org.banana_inc.util.ContextResolver
+import org.banana_inc.util.dnd.Dice
 import org.banana_inc.util.storage.StorageToken
 import org.banana_inc.util.storage.tempStorage
 import org.bukkit.Color
-import org.bukkit.Material
 import org.bukkit.Particle
 import org.bukkit.Particle.DustOptions
 import org.bukkit.entity.Player
@@ -51,8 +58,7 @@ object Command: BaseCommand() {
 
     @Subcommand("cancel")
     fun testCommand(player: Player) {
-        player.sendMessage("${player.tempStorage}")
-        player.tempStorage[token]!!.cancel()
+        sendMessage(player, "hello")
     }
 
     @Subcommand("registerChatEvent")
@@ -89,7 +95,15 @@ object Command: BaseCommand() {
 
     @Subcommand("test")
     fun testConsole(input: String) {
-        logger.info(input.resolve<Material>().toString())
+        val a = Database.objectMapper.readValue<MutableSet<Modifier<*>>>(input)
+        logger.info(a.toString())
+    }
+
+    @Subcommand("rolldice")
+    fun testConsole(player: Player, input: Dice.Sides) {
+        DiceRoll(player, input) {
+            logger.info("you rolled a $it")
+        }
     }
 
     @Subcommand("player")
@@ -106,22 +120,37 @@ object Command: BaseCommand() {
     @Subcommand("beep")
     fun bop(p: Player){
         val gun = Weapon.Ranged.Martial.Gun.Blowgun.create()
-        gun.modifiers.add(Modifier.Enchantment(EnchantmentType.SPEEDY, 1))
+        gun.addModifier(EnchantmentModifier(EnchantmentModifier.EnchantmentType.SPEEDY, 1))
         p.data.inventory[0] = gun
         DatabaseActions.updateThenAsync(p.data) {
             val i = p.data.inventory[0] ?: error("item not found")
             sendMessage(p,"id: ${i.type.name}")
-            if (i.type is Weapon.Ranged)
+            if (i.type is Weapon.Ranged) {
                 sendMessage(p, i.type.damageDice.toString())
+            }
 
         }
     }
 
     @Subcommand("editor")
     fun editor(player: Player){
-        MultiLineEditor(player) {
+        MultiLineEditor(player, String::class) {
             player.sendMessage("finished: $lines")
-        }
+        }.open()
+    }
+
+    @Subcommand("inteditor")
+    fun inteditor(player: Player){
+        MultiLineEditor(player, Int::class) {
+            player.sendMessage("finished: $lines")
+        }.open()
+    }
+
+    @Subcommand("complexEditor")
+    fun complexEditor(player: Player){
+        ComplexTypedMultiLineEditor(player, EnchantmentModifier::class) {
+            player.sendMessage("finished: $lines")
+        }.open()
     }
 
     @Subcommand("inventory")

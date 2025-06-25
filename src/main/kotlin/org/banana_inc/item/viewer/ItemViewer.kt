@@ -8,8 +8,8 @@ import org.banana_inc.gui.base.GUI
 import org.banana_inc.gui.button.generic.ChangePageItem
 import org.banana_inc.gui.button.generic.ClickToGetItem
 import org.banana_inc.item.Item
-import org.banana_inc.item.data.ItemData
-import org.banana_inc.item.data.Weapon.Melee.Simple.Handaxe.create
+import org.banana_inc.item.items.ItemData
+import org.banana_inc.item.items.Weapon.Melee.Simple.Handaxe.create
 import org.banana_inc.util.initialization.InitOnStartup
 import org.banana_inc.util.reflection.ClassReflection
 import org.bukkit.Material

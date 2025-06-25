@@ -5,6 +5,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import org.bukkit.plugin.java.JavaPlugin
 import org.bukkit.scheduler.BukkitTask
+import java.time.Duration
 
 /**
  * Suspends the function in ASYNC.
@@ -69,23 +70,24 @@ infix fun JavaPlugin.nextTick(function: () -> Unit): BukkitTask {
     return this.server.scheduler.runTask(this, function)
 }
 
-fun JavaPlugin.delaySync(seconds: Int, function: () -> Unit): BukkitTask {
-    return this.server.scheduler.runTaskLater(this, function,seconds*20L)
+fun JavaPlugin.delaySync(time: Duration, function: () -> Unit): BukkitTask {
+    return this.server.scheduler.runTaskLater(this, function, time.seconds * 20)
 }
 
 fun JavaPlugin.delaySync(ticks: Long, function: () -> Unit): BukkitTask {
     return this.server.scheduler.runTaskLater(this, function, ticks)
 }
 
-
-fun JavaPlugin.delayAsync(seconds: Int, function: () -> Unit): BukkitTask {
-    return this.server.scheduler.runTaskLaterAsynchronously(this,  function,seconds*20L)
+fun JavaPlugin.delayAsync(time: Duration, function: () -> Unit): BukkitTask {
+    return this.server.scheduler.runTaskLaterAsynchronously(this,  function,time.seconds*20L)
 }
 
 fun JavaPlugin.delayAsync( millis: Long, function: () -> Unit): BukkitTask {
-    return this.server.scheduler.runTaskTimer(this, function, millis,2)
+    return this.server.scheduler.runTaskLaterAsynchronously(this, function, millis)
 }
 
-
+fun JavaPlugin.timer(seconds: Int, delay: Long = 0,  function: () -> Unit): BukkitTask {
+    return this.server.scheduler.runTaskTimer(this, function, delay * 20L, seconds * 20L)
+}
 
 

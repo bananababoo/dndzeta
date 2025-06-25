@@ -8,11 +8,11 @@ import org.banana_inc.item.Item
 import org.banana_inc.logger
 import org.banana_inc.plugin
 import org.bukkit.entity.HumanEntity
-import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryType
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.PlayerInventory
+import kotlin.math.min
 
 fun Inventory.addItem(vararg items: Item<*>) {
     for(item in items) {
@@ -35,8 +35,7 @@ fun Inventory.addItemStackCorrectly(newItem: ItemStack, heldSlot: Int = 0): Item
     for (slot in (heldSlot..<heldSlot + 1) + (0..35)) {
         if (newItem.amount <= 0) break
 
-        logger.info("slot!!! $slot")
-        val slotItem = getDataInventory().items[slot]
+        val slotItem = getDataInventory()[slot]
 
         if (slotItem == null || !slotItem.equalBesidesAmount(item)) continue
         if (slotItem.amount == slotItem.type.stackSize) continue
@@ -52,12 +51,13 @@ fun Inventory.addItemStackCorrectly(newItem: ItemStack, heldSlot: Int = 0): Item
 
     for (slot in (0..35)) {
         if (newItem.amount <= 0) break
-        val slotItem = getDataInventory().items[slot]
+        val slotItem = getDataInventory()[slot]
         if(slotItem == null){
             val generated = newItem.toItem
-            generated.amount = generated.type.stackSize
-            getDataInventory().items[slot] = generated
-            newItem.amount -= item.type.stackSize
+            val depositAmount = min(newItem.amount,newItem.type.maxStackSize)
+            generated.amount = depositAmount
+            getDataInventory()[slot] = generated
+            newItem.amount -= depositAmount
         }
     }
 
@@ -80,7 +80,9 @@ fun Inventory.getDataInventory(): Data.Inventory{
 
 fun Inventory.syncSlotFromData(slot: Int){
     val newItem = getDataInventory()[slot]
-    setItem(slot, newItem?.itemStack())
+    val stack = newItem?.itemStack()
+    logger.info("synched slot $stack")
+    setItem(slot, stack)
 }
 
 fun Inventory.syncDataToInventory(){
@@ -92,12 +94,11 @@ fun Inventory.syncDataToInventory(){
 
 fun Inventory.syncInventoryToData(){
     sendDebugMessage(DebugType.INVENTORY, viewers,"<blue>Syncing")
-    val playerData = (holder!! as Player).data
-    playerData.inventory.clear()
+    getDataInventory().clear()
 
     for(i in contents.indices){
         val newItem = contents[i]?.toItem ?: continue
-        playerData.inventory[i] = newItem
+        getDataInventory()[i] = newItem
         setItem(i, newItem.itemStack())
     }
 }

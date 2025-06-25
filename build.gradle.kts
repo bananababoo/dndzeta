@@ -4,7 +4,6 @@ plugins {
     id("com.github.gmazzo.buildconfig") version "5.5.0"
     id("com.github.ben-manes.versions") version "0.51.0"
     id("nl.littlerobots.version-catalog-update") version "0.8.5"
-
 }
 
 group = "me.bananababoo"
@@ -16,6 +15,7 @@ dependencies {
     //minecraft-adjacent
     implementation(libs.acf.paper)
     implementation(libs.adventure.extra.kotlin)
+    implementation(libs.adventure.gson)
     //kotlin
     implementation(libs.kotlin.stdlib) // https://modrinth.com/plugin/ktlibs-kotlin-stdlib
     implementation(libs.kotlin.script.runtime)
@@ -27,6 +27,7 @@ dependencies {
     implementation(libs.mongo.bson)
     implementation(libs.jackson)
     implementation(libs.jackson.yaml)
+    implementation(libs.jackson.kotlin)
     //database
     implementation(libs.mongo.jackdriver)
     implementation(libs.kmongo)
@@ -96,6 +97,12 @@ tasks.shadowJar {
 
 tasks.build {
     dependsOn(tasks.shadowJar)
+}
+
+tasks.compileKotlin {
+    compilerOptions {
+        javaParameters.set(true)
+    }
 }
 
 buildConfig {

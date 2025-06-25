@@ -77,6 +77,7 @@ object DatabaseActions {
         check(objects.isNotEmpty()) { "You can't insert no objects into the database" }
         val collection = Database.getCollection<T>()
         val operations = objects.map {
+            logger.info("saved ${T::class.simpleName} -> $it" )
             ReplaceOneModel(Filters.eq("_id", it.uuid), it)
         }
         val result = collection.bulkWrite(operations)

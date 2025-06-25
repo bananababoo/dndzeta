@@ -1,46 +1,51 @@
 package org.banana_inc.chat
 
 import net.kyori.adventure.extra.kotlin.plus
-import org.banana_inc.EventManager
+import org.banana_inc.EventManager.chatCallback
 import org.banana_inc.extensions.clickableComponent
 import org.banana_inc.extensions.sendMessage
+import org.banana_inc.logger
 import org.bukkit.entity.Player
+import kotlin.reflect.KClass
 
-class MultiLineEditor(
-    private val player: Player,
-    private val list: MutableCollection<String> = mutableListOf(),
-    private val onClose: MultiLineEditor.() -> Unit
+open class MultiLineEditor<T : Any>(
+    protected val player: Player,
+    protected val type: KClass<T>,
+    protected val list: MutableCollection<T> = mutableListOf(),
+    protected val onClose: MultiLineEditor<T>.() -> Unit
 ){
-
-    val lines: List<String>
+    val lines: List<T>
         get() = list.toList()
 
-    init {
-        renderEditor()
+    companion object {
+        protected const val BORDER = "<gray>-------"
+        private const val TYPE_NEW_MESSAGE = "<gold>Type a new message"
     }
 
-    private  val border = "<gray>-------"
-    private val typeNewMessage = "<gold>Type a new message..."
     private val exitButton = "<light_purple>[Exit]".clickableComponent {
         onClose()
     }
-    private val addButton = "<green>[+]".clickableComponent {
-        sendMessage(player,typeNewMessage)
-        EventManager.chatCallback { newItem: String ->
+
+    protected open val addButton
+        get() = "<green>[+]".clickableComponent {
+        sendMessage(player,TYPE_NEW_MESSAGE)
+        player.chatCallback(type){ newItem ->
              list.add(newItem)
             renderEditor()
         }
     }
-    private val removeButton = {item: String ->
+
+    protected val removeButton = { item: T ->
         "<red>[X]".clickableComponent {
              list.remove(item)
             renderEditor()
         }
     }
-    private val editButton = {  item: String, index: Int ->
+
+    protected open val editButton = { item: T, index: Int ->
         "<gray> $index: <white>${item}".clickableComponent {
-            sendMessage(player,typeNewMessage)
-            EventManager.chatCallback { newText: String ->
+            sendMessage(player,TYPE_NEW_MESSAGE)
+            player.chatCallback(type) { newText: T ->
                 list.remove(item)
                 list.add(newText)
                 renderEditor()
@@ -48,14 +53,23 @@ class MultiLineEditor(
         }
     }
 
-    private fun renderEditor() {
-        sendMessage(player,border)
+    fun open(){
+        renderEditor()
+    }
+
+    protected open fun sendEditorContentLine(index: Int, item: T){
+        sendMessage(player,removeButton(item) + editButton(item,index))
+    }
+
+    protected fun renderEditor() {
+        sendMessage(player,BORDER)
         lines.forEachIndexed { index, item ->
-            sendMessage(player,removeButton(item) + editButton(item,index))
+            sendEditorContentLine(index, item)
         }
+        logger.info(addButton.toString())
         sendMessage(player,addButton)
         sendMessage(player,exitButton)
-        sendMessage(player,border)
+        sendMessage(player,BORDER)
     }
 
 }

@@ -64,6 +64,12 @@ fun Player.clearAllInventory() {
 val Player.hasItemInHand get() = inventory.itemInMainHand.type != Material.AIR
 
 /**
+ * Gets the item in hand if it is not null and the type is not AIR.
+ * @return ItemStack
+ */
+val Player.itemInMainHand get() = data.inventory[inventory.heldItemSlot]
+
+/**
  * Plays sound in player's location.
  * @param sound Sound enum
  * @param volume Volume float
@@ -239,7 +245,11 @@ fun Player.ejectPassengers() {
     eject()
 }
 
-
+fun sendError(player: HumanEntity, vararg message: String){
+    for(m in message){
+        player.sendMessage("<red>[Error]<gray> $m".component)
+    }
+}
 
 fun sendMessage(player: HumanEntity, vararg message: String){
     for(m in message){

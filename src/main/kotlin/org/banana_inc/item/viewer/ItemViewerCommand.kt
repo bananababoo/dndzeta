@@ -5,7 +5,7 @@ import co.aikar.commands.annotation.CommandAlias
 import co.aikar.commands.annotation.Default
 import org.bukkit.entity.Player
 
-@CommandAlias("itemviewer|items|iv")
+@CommandAlias("item_viewer|items|iv")
 object ItemViewerCommand: BaseCommand() {
 
     @Default

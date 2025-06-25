@@ -1,20 +1,35 @@
-item dynamics
-- make as simple as possible
-- special cases for stack size 1
-- deal with item stacks dropped on the floor
-- fix saving
+clone item
+- make all chat look nice
 
-bags
+- modifiers possibly being lists (what level to do at), Interface????
 
-chests / container saveing / loading Data.Inventory
+- modifier link to editor
+
+- item modifier /im get <currently applied modifier>
+
+- list out enums in overlay somehow when in chat asking
+
 
 3d scrollable dice // w/ https://www.youtube.com/watch?v=i18WcvidIfw cause funny
-
-more item attributes (custom lore, custom nane...)
-
-admin item commands, attribute editor / clone / save / backpacks?
+- make better texture!!!!!
+- make other models
+- make dice smaller
+- random offset when throwing multiple at a time
+- random rotation?
+- velocity on model?? to seem like thrown
 
 the rest of the items
+- Containers: (do we have components?)
+    item dynamics
+    - test test test
+    - bag support
+
+    bags: crossbow bolt case, sack, map or scroll case, component pouch???
+    - just bundles, thats it
+    - optionally has a itemtype, only items of that type/category can go in
+    - see if you can do math and stuff to make it carry only 30 lb (change stack amount dynamically?), otherwise backpack physical item
+    backpacks:
+    -
 
 add item textures (no armor yet)
 
@@ -22,15 +37,25 @@ resource pack python generator
 
 item textures
 
-figure out stack item calculation (if i have 5 coins, weight should be sum, cost should be sum)
-
-item lore
+attribute modifier / editor
 
 resource pack custom icon / font system for icons
 
-orthagional battle system https://discord.com/channels/@me/1031875337409273887/1321873059354771548
+orthogonal battle system https://discord.com/channels/@me/1031875337409273887/1321873059354771548
 
 add music
 
+do we use spell components on spells??
+
+item interaction menu
+
+bundle selection menu
+- scroll to slot you wanna select then select it https://discord.com/channels/859617213920051260/1177461663063089214/1373881938770661506
+- can be used for wizard spell selection menu maybe???, for some classes you click the lvl 1-9 spell you want then the spell
+
 ENHANCEMENTS:
 - pickup noice when picking up items (currently no sound sence event is canccled) (depends on rarity?)
+
+NOTES:
+race height for humans is average 0.85 scale as reference
+4 blocks = 10ft

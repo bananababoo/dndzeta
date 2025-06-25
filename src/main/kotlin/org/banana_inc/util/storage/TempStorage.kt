@@ -38,6 +38,9 @@ data class Storage(val boxes: HashMap<StorageToken<out Any>, Any> = HashMap()) {
     inline fun <reified T: Any> putIfAbsent(key: StorageToken<T>, value: T){
         if(get<T>(key) == null) set(key,value)
     }
+    fun wipe(){
+        boxes.clear()
+    }
 
 
 }

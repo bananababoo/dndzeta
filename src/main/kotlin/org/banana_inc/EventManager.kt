@@ -3,7 +3,9 @@ package org.banana_inc
 import io.papermc.paper.event.player.AsyncChatEvent
 import net.kyori.adventure.text.TextComponent
 import org.banana_inc.extensions.resolve
+import org.banana_inc.extensions.sendError
 import org.banana_inc.util.reflection.ClassGraph
+import org.bukkit.entity.Player
 import org.bukkit.event.Cancellable
 import org.bukkit.event.Event
 import org.bukkit.event.EventPriority
@@ -58,16 +60,33 @@ object EventManager: Listener {
 
 
     inline fun <reified T : Event> callback(crossinline action: (T) -> Unit) {
+        callback<T>({ true },action)
+    }
+
+    inline fun <reified T : Event> callback(crossinline filter: (T) -> Boolean, crossinline action: (T) -> Unit) {
         val callback: (T,(Event) -> Unit) -> Unit = { it, reference ->
-            action(it)
-            logger.info(events[T::class]!!.remove(reference).toString())
+            if(filter(it)) {
+                action(it)
+                logger.info(events[T::class]!!.remove(reference).toString())
+            }
         }
         addListenerWithSelfReference<T>(callback)
     }
 
-    inline fun <reified T : Any> chatCallback(crossinline action: (T) -> Unit ){
-        callback<AsyncChatEvent> {
-            action((it.message() as TextComponent).content().resolve<T>())
+    inline fun <reified T : Any> Player.chatCallback(noinline action: (T) -> Unit ){
+        chatCallback(T::class, action)
+    }
+
+    fun <T : Any> Player.chatCallback(type: KClass<T>, action: (T) -> Unit ){
+        callback<AsyncChatEvent> ({ it.player == this }){
+            it.isCancelled = true
+            val content = (it.message() as TextComponent).content()
+            try{
+                action(content.resolve(type))
+            }catch (e: IllegalStateException){
+                sendError(this, "Invalid type! Try again and make sure its a ${type.simpleName}")
+                chatCallback(type,action)
+            }
         }
     }
 

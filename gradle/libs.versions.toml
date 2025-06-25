@@ -13,12 +13,13 @@ mockbukkit = "4.50.0"
 mockk = "1.14.2"
 mongodb = "5.5.1"
 mongojack = "5.0.2"
-paper = "1.21.5-R0.1-SNAPSHOT"
+paper = "1.21.6-R0.1-SNAPSHOT"
 xyz-xenondevs-invui = "2.0.0-alpha.13"
 
 [libraries]
 acf-paper = { module = "com.github.bananababoo.acf:acf-paper", version.ref = "acf" }
 adventure-extra-kotlin = { module = "net.kyori:adventure-extra-kotlin", version.ref = "kyori" }
+adventure-gson = { module = "net.kyori:adventure-text-serializer-gson", version.ref = "kyori"}
 classgraph = { module = "io.github.classgraph:classgraph", version.ref = "classgraph" }
 creative-api = { module = "team.unnamed:creative-api", version.ref = "creative" }
 creative-serializer = { module = "team.unnamed:creative-serializer-minecraft", version.ref = "creative" }
@@ -27,6 +28,7 @@ invui = { module = "xyz.xenondevs.invui:invui", version.ref = "xyz-xenondevs-inv
 invui-kotlin = { module = "xyz.xenondevs.invui:invui-kotlin", version.ref = "xyz-xenondevs-invui" }
 jackson = { module = "com.fasterxml.jackson.core:jackson-core", version.ref = "jackson" }
 jackson-yaml = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml", version.ref = "jackson" }
+jackson-kotlin = { module = "com.fasterxml.jackson.module:jackson-module-kotlin", version.ref = "jackson"}
 kmongo = { module = "org.litote.kmongo:kmongo", version.ref = "kmongo" }
 kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin" }
 kotlin-script-runtime = { module = "org.jetbrains.kotlin:kotlin-script-runtime", version.ref = "kotlin" }

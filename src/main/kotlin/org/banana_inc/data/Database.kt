@@ -1,11 +1,12 @@
 package org.banana_inc.data
 
-import com.fasterxml.jackson.databind.MapperFeature
+import com.fasterxml.jackson.core.StreamReadFeature
 import com.fasterxml.jackson.databind.json.JsonMapper
 import com.fasterxml.jackson.databind.module.SimpleModule
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.KotlinFeature
-import com.fasterxml.jackson.module.kotlin.registerKotlinModule
+import com.fasterxml.jackson.module.kotlin.jsonMapper
+import com.fasterxml.jackson.module.kotlin.kotlinModule
 import com.mongodb.ConnectionString
 import com.mongodb.MongoClientSettings
 import com.mongodb.ServerApi
@@ -20,9 +21,11 @@ import com.mongodb.client.model.changestream.OperationType
 import com.zorbeytorunoglu.kLib.task.Scopes
 import kotlinx.coroutines.launch
 import me.bananababoo.dndzeta.BuildConfig
-import org.banana_inc.item.ItemDeserializer
+import net.kyori.adventure.text.Component
+import org.banana_inc.item.ComponentDeserializer
+import org.banana_inc.item.ComponentSerializer
 import org.banana_inc.item.ItemSerializer
-import org.banana_inc.item.data.ItemData
+import org.banana_inc.item.items.ItemData
 import org.banana_inc.logger
 import org.banana_inc.util.initialization.InitOnStartup
 import org.banana_inc.util.reflection.FieldReflection
@@ -40,21 +43,23 @@ import kotlin.reflect.full.hasAnnotation
 object Database {
     private var client: MongoClient
     private var database: MongoDatabase
-    private val objectMapper: JsonMapper = JsonMapper.builder()
-        .configure(MapperFeature.USE_GETTERS_AS_SETTERS, true).build()
-        .apply {
-            registerModule(JavaTimeModule())
-            registerKotlinModule {
+    val objectMapper: JsonMapper = jsonMapper {
+        addModule(JavaTimeModule())
+        configure(StreamReadFeature.INCLUDE_SOURCE_IN_LOCATION, true)
+        addModule(
+        kotlinModule {
                 enable(KotlinFeature.StrictNullChecks)
                 enable(KotlinFeature.KotlinPropertyNameAsImplicitName)
+                enable(KotlinFeature.SingletonSupport)
             }
-            registerModules(
-                SimpleModule().apply {
-                    addSerializer(ItemData::class.java, ItemSerializer())  // Register serializer
-                    addDeserializer(KClass::class.java, ItemDeserializer())
-                }
-            )
-        }
+        )
+        addModule(SimpleModule().apply {
+                addSerializer(ItemData::class.java, ItemSerializer())  // Register serializer
+                addSerializer(Component::class.java, ComponentSerializer())
+                addDeserializer(Component::class.java, ComponentDeserializer())
+            }
+        )
+    }
     private val collections: MutableSet<String>  = mutableSetOf()
 
     init {
@@ -67,7 +72,6 @@ object Database {
         client = MongoClients.create(mongoClientSettings)
         database = client.getDatabase("dnd_zeta")
         val result = database.runCommand(Document("ping", 1))
-        logger.info("1 $result")
         if (result.getInteger("ok") == 1) {
 
             postInit()

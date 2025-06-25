@@ -16,6 +16,7 @@ object ContextResolver{
     val resolvers: MutableMap<KClass<*>, (String, Any?) -> Any> = mutableMapOf()
 
     init {
+        addResolver { it }
         addResolver { it.toFloat() }
         addResolver { it.toDouble() }
         addResolver { it.toInt() }
@@ -43,9 +44,9 @@ object ContextResolver{
 
     fun <T : Any> resolve(input: String, clazz: KClass<T>): T {
         if(clazz.java.isEnum){
-            return clazz.java.enumConstants.first{
-                (it as Enum<*>).name.equals(input,true)
-            }
+            return clazz.java.enumConstants.firstOrNull {
+                (it as Enum<*>).name.equals(input, true)
+            }?: error("Can't find enum $input in ${clazz.simpleName} when resolving")
         }
         if(clazz == String::class){
             return clazz.cast(input)

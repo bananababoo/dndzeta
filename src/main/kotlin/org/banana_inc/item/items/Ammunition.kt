@@ -1,4 +1,4 @@
-package org.banana_inc.item.data
+package org.banana_inc.item.items
 
 import org.banana_inc.extensions.CP
 import org.banana_inc.extensions.SP

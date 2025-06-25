@@ -1,17 +1,22 @@
 package org.banana_inc.extensions
 
+import net.kyori.adventure.extra.kotlin.plus
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.event.ClickEvent
 import net.kyori.adventure.text.minimessage.MiniMessage
 import org.apache.maven.artifact.versioning.ComparableVersion
+import org.banana_inc.logger
 import org.banana_inc.util.ContextResolver
 import org.bukkit.Bukkit
 import org.bukkit.Location
+import org.jetbrains.annotations.NotNull
 import java.security.MessageDigest
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.Locale.getDefault
 import java.util.regex.Pattern
+import kotlin.reflect.KClass
 
 
 val String.component get(): Component {
@@ -22,8 +27,14 @@ val String.component get(): Component {
     return message
 }
 
-fun String.clickableComponent(onClick: () -> Unit): Component {
-    return this.component.clickEvent(ClickEvent.callback { onClick() })
+operator fun Component.plus(string: String): Component{
+    return this.plus(string.component)
+}
+
+fun String.clickableComponent(onClick: () -> Unit): @NotNull Component {
+    val a = this.component.clickEvent(ClickEvent.callback { onClick() })
+    logger.info("makingComponent: $a")
+    return a
 }
 
 
@@ -129,7 +140,7 @@ val String.isDecimalNumber: Boolean
  * @return Date formed with the given format
  */
 fun String.dateInFormat(format: String): Date? {
-    val dateFormat = SimpleDateFormat(format, Locale.getDefault())
+    val dateFormat = SimpleDateFormat(format, getDefault())
     var parsedDate: Date? = null
     try {
         parsedDate = dateFormat.parse(this)
@@ -172,3 +183,9 @@ fun String.fromLegibleString(): Location {
 inline fun <reified T : Any> String.resolve(): T {
     return ContextResolver.resolve<T>(this)
 }
+fun <T : Any> String.resolve(type: KClass<T>): T {
+    return ContextResolver.resolve(this,type)
+}
+
+
+fun String.capitalizeFirstLetter(): String = lowercase().replaceFirstChar { it.titlecase(getDefault()) }

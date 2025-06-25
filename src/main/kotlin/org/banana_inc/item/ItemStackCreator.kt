@@ -1,10 +1,14 @@
 package org.banana_inc.item
 
+import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
 import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.format.TextDecoration
+import org.banana_inc.data.Database
+import org.banana_inc.extensions.capitalizeFirstLetter
 import org.banana_inc.extensions.component
 import org.banana_inc.extensions.useMeta
-import org.banana_inc.item.data.ItemData
-import org.banana_inc.item.data.Weapon
+import org.banana_inc.item.items.ItemData
+import org.banana_inc.item.items.Weapon
 import org.banana_inc.plugin
 import org.bukkit.NamespacedKey
 import org.bukkit.inventory.ItemStack
@@ -26,13 +30,14 @@ object ItemStackCreator {
 
         base.useMeta {
             persistentDataContainer[idKey, PersistentDataType.STRING] = item.type.name
-            persistentDataContainer[modifiersKey, PersistentDataType.STRING] = plugin.gson.toJson(item.modifiers)
+            val value = Database.objectMapper.writerFor(jacksonTypeRef<MutableSet<Modifier<*>>>()).writeValueAsString(item.getModifiers())
+            persistentDataContainer[modifiersKey, PersistentDataType.STRING] = value
         }
 
         applyVisuals(itemData, base)
         applyAttributes(itemData, base)
 
-        for(modifier in item.modifiers) {
+        for(modifier in item.getModifiers()) {
             modifier.modifyBase(base)
         }
 
@@ -49,9 +54,9 @@ object ItemStackCreator {
         base.useMeta {
             itemModel = NamespacedKey("dndzeta", figureOutResourcePackKey(itemData))
             displayName( //from-words-like-this -> To Words Like This
-                ("<reset>" + itemData.name.split("_").joinToString(" ")
-                    { word -> word.replaceFirstChar { it.titlecaseChar() }
-                }).component
+                itemData.name.split("_").joinToString(" ")
+                    { word -> word.capitalizeFirstLetter() }
+                .component.decorations(mapOf(TextDecoration.ITALIC to TextDecoration.State.FALSE))
             )
             lore(figureOutLore(itemData, base))
         }

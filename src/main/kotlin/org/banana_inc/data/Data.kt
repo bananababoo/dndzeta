@@ -2,6 +2,7 @@
 
 package org.banana_inc.data
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
@@ -55,7 +56,7 @@ sealed class Data{
         @JsonDeserialize(using = UUIDBinaryDeserializer::class)
         override val uuid: UUID,
         var money: Long = 0,
-        var inventory: Inventory = Inventory(36),
+        var inventory: Inventory = Inventory(40),
         var settings: Settings = Settings(),
     ) : Data(){
         @JsonIgnore
@@ -83,18 +84,22 @@ sealed class Data{
             var inGUI: Boolean = false
         )
     }
-    data class Inventory(
+
+    @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+    open class Inventory(
         val size: Int,
-        val items: MutableMap<Int, Item<*>> = mutableMapOf(),
+        private val items: MutableMap<Int, Item<*>> = mutableMapOf() ,
     ){
         fun clear() = items.clear()
         @JsonIgnore
         operator fun set(slot: Int, item: Item<*>) {
-            if(slot + 1 > size) throw IllegalStateException("Can't set slot $slot in data inv with size $size")
+            check(slot + 1 <= size) { "Can't set slot $slot in data inv with size $size" }
             items[slot] = item
         }
         @JsonIgnore
         operator fun get(slot: Int) = items[slot]
+        @JsonIgnore
+        val getAllCopy = items.toMutableMap()
         fun remove(slot: Int) = items.remove(slot)
         override fun toString() = items.toString()
     }

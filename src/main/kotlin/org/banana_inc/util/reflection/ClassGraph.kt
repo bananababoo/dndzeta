@@ -1,6 +1,5 @@
 package org.banana_inc.util.reflection
 
-import co.aikar.commands.BaseCommand
 import io.github.classgraph.ClassGraph
 import org.banana_inc.util.initialization.InitOnStartup
 import org.bukkit.event.Event
@@ -62,21 +61,33 @@ object ClassGraph {
         eventClasses
     }
 
-    val allCommandClasses: List<KClass<out BaseCommand>> by lazy {
-        val eventClasses = mutableListOf<KClass<out BaseCommand>>()
+    inline fun <reified T : Any> allSubClasses(): List<KClass<out T>>  {
+        val eventClasses = mutableListOf<KClass<out T>>()
         ClassGraph()
             .enableClassInfo()
             .enableExternalClasses()
-            .acceptPackages(
-                "org.banana_inc",
-            )
+            .acceptPackages("org.banana_inc",)
             .scan().use { result ->
-                result.getSubclasses(BaseCommand::class.java).forEach { classInfo ->
-                    val clazz = classInfo.loadClass(BaseCommand::class.java).kotlin
+                result.getSubclasses(T::class.java).forEach { classInfo ->
+                    val clazz = classInfo.loadClass(T::class.java).kotlin
                     eventClasses.add(clazz)
                 }
             }
-        eventClasses
+        return eventClasses
+    }
+    inline fun <reified T : Any> allImplementingInterface(): List<KClass<out T>>  {
+        val eventClasses = mutableListOf<KClass<out T>>()
+        ClassGraph()
+            .enableClassInfo()
+            .enableExternalClasses()
+            .acceptPackages("org.banana_inc",)
+            .scan().use { result ->
+                result.getClassesImplementing(T::class.java).forEach { classInfo ->
+                    val clazz = classInfo.loadClass(T::class.java).kotlin
+                    eventClasses.add(clazz)
+                }
+            }
+        return eventClasses
     }
 
     fun allSubClasses(first: KClass<out Any>,list: MutableList<KClass<out Any>> = mutableListOf()): MutableList<KClass<out Any>>{

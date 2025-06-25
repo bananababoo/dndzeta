@@ -1,12 +1,13 @@
 package org.banana_inc.extensions
 
+import com.fasterxml.jackson.module.kotlin.readValue
 import net.kyori.adventure.text.Component
+import org.banana_inc.data.Database
 import org.banana_inc.item.Item
 import org.banana_inc.item.ItemStackCreator
 import org.banana_inc.item.Modifier
-import org.banana_inc.item.data.ItemData
-import org.banana_inc.item.data.Weapon.Melee.Simple.Handaxe.create
-import org.banana_inc.plugin
+import org.banana_inc.item.items.ItemData
+import org.banana_inc.item.items.Weapon.Melee.Simple.Handaxe.create
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.enchantments.Enchantment
@@ -14,8 +15,6 @@ import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.ItemMeta
 import org.bukkit.persistence.PersistentDataType
-import kotlin.reflect.javaType
-import kotlin.reflect.typeOf
 
 /**
  * Gets the display name of the item or sets one.
@@ -216,23 +215,15 @@ val Material.isMineCart: Boolean get() = name.endsWith("_MINECART")
 
 @OptIn(ExperimentalStdlibApi::class)
 val ItemStack.toItem: Item<*>
+    @Throws(IllegalStateException::class)
     get() {
-        if(type == Material.AIR) throw IllegalStateException("Air isn't an item")
-        if(itemMeta == null) throw IllegalStateException("Item: $type has null item meta")
-
+        check(type != Material.AIR) { "Air isn't an item" }
+        checkNotNull(itemMeta) { "Item: $type has null item meta" }
         return useMeta {
-        val id = persistentDataContainer[ItemStackCreator.idKey, PersistentDataType.STRING] ?: error("no id")
-        val modifiers = persistentDataContainer[ItemStackCreator.modifiersKey, PersistentDataType.STRING]
-
-        ItemData[id]!!.create().apply {
-            if(modifiers != null) {
-                this.modifiers.addAll(
-                    plugin.gson.fromJson<Collection<Modifier<ItemData>>>(
-                        modifiers,
-                        typeOf<List<Modifier<*>>>().javaType
-                    ).toList()
-                )
-            }
+            val id = persistentDataContainer[ItemStackCreator.idKey, PersistentDataType.STRING] ?: error("no id")
+            val modifierBytes = persistentDataContainer[ItemStackCreator.modifiersKey, PersistentDataType.STRING]
+            val modifiers = if(modifierBytes != null) Database.objectMapper.readValue<MutableSet<Modifier<*>>>(modifierBytes) else mutableSetOf()
+            ItemData[id]!!.create(modifiers=modifiers).apply {
             amount = this@toItem.amount
         }
     }

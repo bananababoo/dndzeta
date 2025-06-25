@@ -2,7 +2,7 @@ package org.banana_inc.resourcepack
 
 import net.kyori.adventure.key.Key
 import org.banana_inc.extensions.component
-import org.banana_inc.item.data.ItemData
+import org.banana_inc.item.items.ItemData
 import org.banana_inc.plugin
 import team.unnamed.creative.BuiltResourcePack
 import team.unnamed.creative.ResourcePack

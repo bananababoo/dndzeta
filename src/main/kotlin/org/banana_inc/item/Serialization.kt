@@ -6,7 +6,10 @@ import com.fasterxml.jackson.databind.DeserializationContext
 import com.fasterxml.jackson.databind.JsonDeserializer
 import com.fasterxml.jackson.databind.JsonSerializer
 import com.fasterxml.jackson.databind.SerializerProvider
-import org.banana_inc.item.data.ItemData
+import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer
+import org.banana_inc.item.items.ItemData
+import org.banana_inc.logger
 import kotlin.reflect.KClass
 
 class ItemSerializer : JsonSerializer<ItemData>() {
@@ -21,5 +24,20 @@ class ItemDeserializer : JsonDeserializer<KClass<out ItemData>>() {
         return ItemData.getClasses()
             .firstOrNull { it.kotlin.simpleName == className }?.kotlin
             ?: throw IllegalArgumentException("Unknown type: $className")  // Handle error if type isn't found
+    }
+}
+
+class ComponentSerializer: JsonSerializer<Component>() {
+    override fun serialize(value: Component, gen: JsonGenerator, serializers: SerializerProvider) {
+        val json = GsonComponentSerializer.gson().serialize(value)
+        gen.writeString(json)
+    }
+}
+
+class ComponentDeserializer : JsonDeserializer<Component>() {
+    override fun deserialize(p: JsonParser, ctxt: DeserializationContext): Component {
+        logger.info(p.text)
+        val gotit = GsonComponentSerializer.gson().deserialize(p.text)
+        return gotit
     }
 }
