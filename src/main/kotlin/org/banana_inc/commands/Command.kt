@@ -21,11 +21,13 @@ import org.banana_inc.extensions.data
 import org.banana_inc.extensions.radiusAsyncCached
 import org.banana_inc.extensions.relativeOffset
 import org.banana_inc.extensions.sendMessage
+import org.banana_inc.item.Enchantment
 import org.banana_inc.item.EnchantmentModifier
 import org.banana_inc.item.Modifier
 import org.banana_inc.item.items.Weapon
 import org.banana_inc.item.items.Weapon.Melee.Martial.Halberd.create
 import org.banana_inc.logger
+import org.banana_inc.mechanics.battle.grid.BattleGrid
 import org.banana_inc.mechanics.dice.DiceRoll
 import org.banana_inc.util.ContextResolver
 import org.banana_inc.util.dnd.Dice
@@ -61,10 +63,20 @@ object Command: BaseCommand() {
         sendMessage(player, "hello")
     }
 
+    @Subcommand("grid")
+    fun gridCommand(player: Player) {
+        BattleGrid(player)
+    }
+
+    @Subcommand("stopGrid")
+    fun stopGridCommand(player: Player) {
+        player.tempStorage[BattleGrid.storageToken]?.remove()
+    }
+
     @Subcommand("registerChatEvent")
     fun registerTest(player: Player, args: String ) {
         player.sendMessage("registered event: $args")
-        EventManager.addListener<AsyncChatEvent>{  player.sendMessage(args) }
+        EventManager.addListener<AsyncChatEvent>{ player.sendMessage(args) }
     }
     @Subcommand("money")
     fun money(player: Player, amount: Long ) {
@@ -120,7 +132,7 @@ object Command: BaseCommand() {
     @Subcommand("beep")
     fun bop(p: Player){
         val gun = Weapon.Ranged.Martial.Gun.Blowgun.create()
-        gun.addModifier(EnchantmentModifier(EnchantmentModifier.EnchantmentType.SPEEDY, 1))
+        gun.addModifier(EnchantmentModifier(mutableListOf(Enchantment(Enchantment.Type.SPEEDY, 1))))
         p.data.inventory[0] = gun
         DatabaseActions.updateThenAsync(p.data) {
             val i = p.data.inventory[0] ?: error("item not found")
@@ -136,21 +148,21 @@ object Command: BaseCommand() {
     fun editor(player: Player){
         MultiLineEditor(player, String::class) {
             player.sendMessage("finished: $lines")
-        }.open()
+        }
     }
 
     @Subcommand("inteditor")
     fun inteditor(player: Player){
         MultiLineEditor(player, Int::class) {
             player.sendMessage("finished: $lines")
-        }.open()
+        }
     }
 
     @Subcommand("complexEditor")
     fun complexEditor(player: Player){
         ComplexTypedMultiLineEditor(player, EnchantmentModifier::class) {
             player.sendMessage("finished: $lines")
-        }.open()
+        }
     }
 
     @Subcommand("inventory")

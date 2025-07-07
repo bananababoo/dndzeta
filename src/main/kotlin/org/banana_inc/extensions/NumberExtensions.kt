@@ -22,7 +22,21 @@ val Int.GP
 val Int.PP
     get() = Currency.platinum(this.toLong())
 
+operator fun Currency.plus(value: Int): Currency {
+    return Currency(amount + value)
+}
+
+operator fun Currency.minus(value: Int): Currency {
+    check(amount - value > 0)
+    return Currency(amount - value)
+}
+
+operator fun Currency.times(value: Int): Currency {
+    return Currency(amount * value)
+}
+
 val Double.oz get() = Weight(0,this)
 val Double.lb get() = Weight(this.toInt(), ((this % 1) * 16))
 val Int.oz get() = Weight(0,this.toDouble())
 val Int.lb get() = Weight(this,0.0)
+

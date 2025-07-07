@@ -1,6 +1,6 @@
 package org.banana_inc.util.dnd
 
-import org.banana_inc.extensions.enumReadableName
+import org.banana_inc.extensions.readableName
 
 class Dice(val amount: Int, private val sides: Sides) {
 
@@ -11,7 +11,7 @@ class Dice(val amount: Int, private val sides: Sides) {
             dice.mapValues { die -> die.key.roll() }
         }
         override fun toString(): String = dice.entries.joinToString(separator = "<newline>") {
-            val type = it.value.enumReadableName()
+            val type = it.value.readableName()
             val dice = "${if(it.key.sides.sides == 1) it.key.amount else it.key}"
             "$dice $type"
         }

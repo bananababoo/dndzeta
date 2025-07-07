@@ -16,7 +16,7 @@ object DebugMode: BaseCommand() {
     @Subcommand("view")
     fun view(player: Player){
         sendMessage(player,
-            "${player.tempStorage[Debug.token]}"
+            "<gray>Current Debugs Enabled:<white> ${player.tempStorage[Debug.token] ?: "None"}"
         )
     }
 

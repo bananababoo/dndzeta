@@ -222,7 +222,7 @@ val ItemStack.toItem: Item<*>
         return useMeta {
             val id = persistentDataContainer[ItemStackCreator.idKey, PersistentDataType.STRING] ?: error("no id")
             val modifierBytes = persistentDataContainer[ItemStackCreator.modifiersKey, PersistentDataType.STRING]
-            val modifiers = if(modifierBytes != null) Database.objectMapper.readValue<MutableSet<Modifier<*>>>(modifierBytes) else mutableSetOf()
+            val modifiers = if(modifierBytes != null) Database.objectMapper.readValue<MutableSet<out Modifier<*>>>(modifierBytes) else mutableSetOf()
             ItemData[id]!!.create(modifiers=modifiers).apply {
             amount = this@toItem.amount
         }

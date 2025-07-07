@@ -1,39 +1,23 @@
-clone item
-- make all chat look nice
-
-- modifiers possibly being lists (what level to do at), Interface????
-
-- modifier link to editor
-
-- item modifier /im get <currently applied modifier>
-
-- list out enums in overlay somehow when in chat asking
-
-
-3d scrollable dice // w/ https://www.youtube.com/watch?v=i18WcvidIfw cause funny
-- make better texture!!!!!
-- make other models
-- make dice smaller
-- random offset when throwing multiple at a time
-- random rotation?
-- velocity on model?? to seem like thrown
-
 the rest of the items
-- Containers: (do we have components?)
+
     item dynamics
     - test test test
     - bag support
 
     bags: crossbow bolt case, sack, map or scroll case, component pouch???
-    - just bundles, thats it
+    - just bundles, that's it
     - optionally has a itemtype, only items of that type/category can go in
     - see if you can do math and stuff to make it carry only 30 lb (change stack amount dynamically?), otherwise backpack physical item
     backpacks:
     -
 
-add item textures (no armor yet)
+figure out what happens when you get a item but inv full
+ - per player item drops?
+ - lost and found pouch?
+ - both?
+ - something for /gives?
 
-resource pack python generator
+add item textures (no armor yet)
 
 item textures
 
@@ -59,3 +43,13 @@ ENHANCEMENTS:
 NOTES:
 race height for humans is average 0.85 scale as reference
 4 blocks = 10ft
+
+
+art:
+3d scrollable dice // w/ https://www.youtube.com/watch?v=i18WcvidIfw cause funny
+- make better texture!!!!!
+- make other models
+- make dice smaller
+- random offset when throwing multiple at a time
+- random rotation?
+- velocity on model?? to seem like thrown

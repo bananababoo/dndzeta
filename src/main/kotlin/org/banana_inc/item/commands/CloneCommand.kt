@@ -7,8 +7,8 @@ import org.banana_inc.extensions.itemInMainHand
 import org.banana_inc.extensions.syncSlotFromData
 import org.bukkit.entity.Player
 
-@CommandAlias("item_clone|ic")
-object Clone: BaseCommand() {
+@CommandAlias("item_clone|_ic")
+object CloneCommand: BaseCommand() {
 
     @Default
     fun clone(player: Player) {

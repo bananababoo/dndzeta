@@ -8,6 +8,7 @@ import org.banana_inc.extensions.component
 import org.banana_inc.extensions.sendMessage
 import org.banana_inc.logger
 import org.banana_inc.util.loop
+import org.banana_inc.util.readable
 import org.bukkit.entity.Player
 import kotlin.reflect.KClass
 import kotlin.reflect.full.primaryConstructor
@@ -15,21 +16,22 @@ import kotlin.reflect.full.primaryConstructor
 class ComplexTypedMultiLineEditor<T : Any>(
     player: Player,
     type: KClass<T>,
+    lines: MutableList<T> = mutableListOf(),
     onClose: MultiLineEditor<T>.() -> Unit):
-    MultiLineEditor<T>(player,type,onClose=onClose) {
+    MultiLineEditor<T>(player,type,lines,onClose) {
 
     override val addButton
         get() = "<green>[+]".clickableComponent {
             val params: MutableList<Any> = mutableListOf()
             loop(attributes.size,{ backToStart, index ->
                 val attribute = attributes.entries.elementAt(index)
-                sendMessage(player, "Select a ${attribute.value} of type ${attribute.key.simpleName}")
+                sendMessage(player, "Select a ${attribute.value} of type ".component.append(attribute.key.readable))
                 player.chatCallback(attribute.key){
                     params.add(it)
                     backToStart()
                 }
             }) {
-                list.add(type.primaryConstructor!!.call(*params.toTypedArray()))
+                lines.add(type.primaryConstructor!!.call(*params.toTypedArray()))
                 renderEditor()
             }
         }
@@ -38,7 +40,7 @@ class ComplexTypedMultiLineEditor<T : Any>(
         val property = type.java.getDeclaredField(attribute.value)
         property.trySetAccessible()
         "${property.name}: ${property.get(item)} ".clickableComponent {
-            sendMessage(player, "Select a ${attribute.value} of type ${attribute.key.simpleName}")
+            sendMessage(player, "Select a ${attribute.value} of type ".component.append(attribute.key.readable))
             player.chatCallback(attribute.key) {
                 property.set(item, it)
                 renderEditor()

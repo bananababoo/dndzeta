@@ -66,7 +66,7 @@ sealed class ItemData(
         this.name = this.javaClass.simpleName.replace(Regex("(?<=[a-zA-Z])(?=[A-Z])"), "_").lowercase()
     }
 
-    inline fun <reified T : ItemData> T.create(modifiers: MutableSet<Modifier<T>> = mutableSetOf()): Item<T> {
+    inline fun <reified T : ItemData> T.create(modifiers: MutableSet<out Modifier<T>> = mutableSetOf()): Item<T> {
         for(modifier in modifiers) {
             val superType = modifier::class.java.genericSuperclass as ParameterizedType
             val itemModifierBroadType = (superType.actualTypeArguments[0] as Class<*>).kotlin

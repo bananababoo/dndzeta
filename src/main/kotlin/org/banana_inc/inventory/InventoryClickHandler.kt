@@ -11,7 +11,9 @@ import org.bukkit.entity.HumanEntity
 import org.bukkit.event.inventory.ClickType
 import org.bukkit.event.inventory.InventoryAction
 import org.bukkit.event.inventory.InventoryClickEvent
+import org.bukkit.event.inventory.InventoryType
 import org.bukkit.inventory.Inventory
+import org.bukkit.inventory.InventoryView
 import org.bukkit.inventory.ItemStack
 import kotlin.math.ceil
 import kotlin.math.floor
@@ -53,10 +55,12 @@ object InventoryClickHandler {
                     placeOne(cursor, dataInventory, slot, slotItem, clickedInv)
                 }
                 InventoryAction.SWAP_WITH_CURSOR -> {
-                    isCancelled = true
-                    swapWithCursor(cursor, clickedInv, slot, slotItem, click, dataInventory)
+                    swapWithCursor(cursor, clickedInv, slot, slotItem, click, dataInventory){ isCancelled = true }
                 }
-                InventoryAction.MOVE_TO_OTHER_INVENTORY -> moveToOtherInventory(clickedInv, player)
+                InventoryAction.MOVE_TO_OTHER_INVENTORY -> {
+                    isCancelled = true
+                    moveToOtherInventory(clickedInv, player, slot, slotItem, player.openInventory)
+                }
                 InventoryAction.HOTBAR_SWAP -> hotbarSwap(dataInventory, slot, hotbarButton, slotItem)
                 InventoryAction.COLLECT_TO_CURSOR -> {
                     isCancelled = true
@@ -106,11 +110,12 @@ object InventoryClickHandler {
         clickedInv.syncSlotFromData(slot)
     }
 
-    private fun swapWithCursor(cursor: ItemStack, clickedInv: Inventory, slot: Int, slotItem: Item<*>?, click: ClickType, dataInventory: Data.Inventory){
+    private fun swapWithCursor(cursor: ItemStack, clickedInv: Inventory, slot: Int, slotItem: Item<*>?, click: ClickType, dataInventory: Data.Inventory, cancel: () -> Unit){
         val cursorItem = cursor.toItem
         val stackSize = cursorItem.type.stackSize
         val clickedItem = clickedInv.getItem(slot)!!
         if(slotItem?.equalBesidesAmount(cursorItem) == true){
+            cancel()
             val addAmount = if(click.isRightClick) 1 else cursorItem.amount
             val total = cursorItem.amount + clickedItem.amount
 
@@ -130,13 +135,30 @@ object InventoryClickHandler {
         }
     }
 
-    private fun moveToOtherInventory(clickedInv: Inventory, player: HumanEntity){
-        //possibly better way to do this, but that involves predicting where the items will go, and gets messy (:
-        // check no top inv -> if item in bottom row, distribute to top and the put the rest in the bottom.... (:::
-        //https://www.spigotmc.org/threads/predicting-the-results-of-an-inventoryinteractevent.618169/
-        clickedInv.syncInventoryToDataNextTick {
-            sendDebugMessage(DebugType.INVENTORY,player,"<blue>New inventory: ${player.data.inventory}")
+    private fun moveToOtherInventory(clickedInv: Inventory, player: HumanEntity, slot: Int, slotItem: Item<*>?, invView: InventoryView){
+        if(slotItem == null) return
+        val goingToSlotOrder: List<Int>
+        val destinationInv: Data.Inventory
+        val dataInv: Data.Inventory = clickedInv.getDataInventory()
+
+        // if we clicked on a player inv,
+
+        if(invView.topInventory.type == InventoryType.CHEST){
+            if(clickedInv.type == InventoryType.PLAYER) {
+                destinationInv = invView.topInventory.getDataInventory()
+                goingToSlotOrder = (0..(dataInv.size - 1)).toList()
+            }else{
+                destinationInv = player.data.inventory
+                goingToSlotOrder =  (8..0) + (35..9)
+            }
+        }else {
+            goingToSlotOrder = if(slot < 9) (9..35).toList() else  (0..8).toList()
+            destinationInv = player.data.inventory
         }
+        distributeItems(dataInv, slot,goingToSlotOrder,destinationInv)
+        clickedInv.syncDataToInventory()
+        sendDebugMessage(DebugType.INVENTORY,player,"<blue>New inventory: ${player.data.inventory}")
+
     }
 
     private fun collectToCursor(dataInventory: Data.Inventory, cursor: ItemStack, clickedInv: Inventory){
@@ -188,4 +210,29 @@ object InventoryClickHandler {
             }
         }
     }
+
+    private fun distributeItems(inv: Data.Inventory, cursorSlot: Int, slotRange: List<Int>, destinationInv: Data.Inventory){
+        val cursor = inv[cursorSlot]!!
+        val stackSize = cursor.type.stackSize
+        var distributionAmount = cursor.amount
+        for(i in slotRange){
+            val inSlot = destinationInv[i]
+            if(distributionAmount == 0) break
+            if(inSlot == null){
+                val adding = if(distributionAmount > stackSize) stackSize else distributionAmount
+                destinationInv[i] = cursor.copy(_amount = adding)
+                distributionAmount -= adding
+                continue
+            }
+            val slotLeftOverSpace = stackSize - inSlot.amount
+            if (inSlot.equalBesidesAmount(cursor) && slotLeftOverSpace != 0) {
+                val adding = if (distributionAmount > slotLeftOverSpace) slotLeftOverSpace else distributionAmount
+                inSlot.amount += adding
+                distributionAmount -= adding
+            }
+
+        }
+        inv.remove(cursorSlot)
+    }
+
 }

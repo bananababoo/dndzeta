@@ -6,6 +6,7 @@ import net.kyori.adventure.text.format.TextDecoration
 import org.banana_inc.data.Database
 import org.banana_inc.extensions.capitalizeFirstLetter
 import org.banana_inc.extensions.component
+import org.banana_inc.extensions.times
 import org.banana_inc.extensions.useMeta
 import org.banana_inc.item.items.ItemData
 import org.banana_inc.item.items.Weapon
@@ -30,14 +31,14 @@ object ItemStackCreator {
 
         base.useMeta {
             persistentDataContainer[idKey, PersistentDataType.STRING] = item.type.name
-            val value = Database.objectMapper.writerFor(jacksonTypeRef<MutableSet<Modifier<*>>>()).writeValueAsString(item.getModifiers())
+            val value = Database.objectMapper.writerFor(jacksonTypeRef<MutableSet<Modifier<*>>>()).writeValueAsString(item.getModifiersCopy())
             persistentDataContainer[modifiersKey, PersistentDataType.STRING] = value
         }
 
         applyVisuals(itemData, base)
         applyAttributes(itemData, base)
 
-        for(modifier in item.getModifiers()) {
+        for(modifier in item.getModifiersCopy()) {
             modifier.modifyBase(base)
         }
 
@@ -71,7 +72,7 @@ object ItemStackCreator {
             }
 
             add("Weight: %.2f lbs.".format(itemData.weight.asLbs() * base.amount).component)
-            add("Value: ${itemData.value}".component)
+            add("Value: ${itemData.value * base.amount}".component)
         }
     }
 

@@ -81,19 +81,18 @@ fun Inventory.getDataInventory(): Data.Inventory{
 fun Inventory.syncSlotFromData(slot: Int){
     val newItem = getDataInventory()[slot]
     val stack = newItem?.itemStack()
-    logger.info("synched slot $stack")
     setItem(slot, stack)
 }
 
 fun Inventory.syncDataToInventory(){
-    sendDebugMessage(DebugType.INVENTORY, viewers,"<blue>Syncing")
+    sendDebugMessage(DebugType.INVENTORY, viewers,"<blue>Syncing Data to Inventory")
     for(slot in 0..35){
         syncSlotFromData(slot)
     }
 }
 
 fun Inventory.syncInventoryToData(){
-    sendDebugMessage(DebugType.INVENTORY, viewers,"<blue>Syncing")
+    sendDebugMessage(DebugType.INVENTORY, viewers,"<blue>Syncing Inventory to Data")
     getDataInventory().clear()
 
     for(i in contents.indices){

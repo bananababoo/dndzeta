@@ -24,5 +24,6 @@ dependencyResolutionManagement {
         maven("https://www.jitpack.io")
         maven("https://oss.sonatype.org/content/repositories/snapshots/")
         maven("https://repo.xenondevs.xyz/releases")
+        maven("https://repo.dmulloy2.net/repository/public/")
     }
 }

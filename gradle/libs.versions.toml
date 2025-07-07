@@ -14,6 +14,7 @@ mockk = "1.14.4"
 mongodb = "5.5.1"
 mongojack = "5.0.2"
 paper = "1.21.6-R0.1-SNAPSHOT"
+protocollib = "5.4.0"
 xyz-xenondevs-invui = "2.0.0-alpha.14"
 
 [libraries]
@@ -40,3 +41,4 @@ mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
 mongo-bson = { module = "org.mongodb:bson-kotlinx", version.ref = "mongodb" }
 mongo-jackdriver = { module = "org.mongojack:mongojack", version.ref = "mongojack" }
 paper-api = { module = "io.papermc.paper:paper-api", version.ref = "paper" }
+protocollib = {module = "com.comphenix.protocol:ProtocolLib", version.ref = "protocollib"}

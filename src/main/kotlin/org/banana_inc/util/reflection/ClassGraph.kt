@@ -70,6 +70,7 @@ object ClassGraph {
             .scan().use { result ->
                 result.getSubclasses(T::class.java).forEach { classInfo ->
                     val clazz = classInfo.loadClass(T::class.java).kotlin
+                    if(clazz.isAbstract) return@forEach
                     eventClasses.add(clazz)
                 }
             }

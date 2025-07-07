@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
-import org.banana_inc.extensions.getFirstTypeArgumentClass
+import org.banana_inc.extensions.getFirstClassTypeArgument
 import org.banana_inc.item.items.ItemData
 import org.banana_inc.item.items.Magical
 import org.banana_inc.logger
@@ -19,7 +19,8 @@ data class Item<T: ItemData> @JsonIgnore constructor(
     val type: T,
     private var modifiers: ClassSet<Modifier<T>> = ClassSet(),
     @JsonProperty("amount")
-    private var _amount: Int = 1
+    private var _amount: Int = 1,
+
 ){
     var amount: Int
         get() = _amount
@@ -39,8 +40,8 @@ data class Item<T: ItemData> @JsonIgnore constructor(
         modifiers: MutableSet<Modifier<T>> = mutableSetOf()
     ): this(ItemData[type.java], modifiers = ClassSet<Modifier<T>>().apply{
         for (mod in modifiers) {
-            logger.info("checking $type vs ${mod::class.getFirstTypeArgumentClass}")
-            val modSpecifier = mod::class.getFirstTypeArgumentClass
+            logger.info("checking $type vs ${mod::class.getFirstClassTypeArgument}")
+            val modSpecifier = mod::class.getFirstClassTypeArgument
             check(type.isSubclassOf(modSpecifier) || type == modSpecifier)
         }
         addAll(modifiers)
@@ -57,22 +58,29 @@ data class Item<T: ItemData> @JsonIgnore constructor(
     }
     fun removeModifier(mod: Modifier<*>){
         @Suppress("unchecked_cast")
-        modifiers.removeClass(mod::class as KClass<Modifier<T>>)
+        modifiers.removeClass(mod::class as KClass<out Modifier<T>>)
     }
-    fun getModifiers(): Set<Modifier<T>>{
+
+    @JsonIgnore
+    fun getModifiersCopy(): Set<Modifier<T>>{
         return modifiers.toSet()
     }
 
     fun checkIfModifierValid(mod: Modifier<*>): Boolean {
-        val modSpecifier = mod::class.getFirstTypeArgumentClass
+        return checkIfModifierValid(mod::class)
+    }
+    fun checkIfModifierValid(mod: KClass<out Modifier<*>>): Boolean {
+        val modSpecifier = mod.getFirstClassTypeArgument
         return type::class.isSubclassOf(modSpecifier) || type::class == modSpecifier
     }
 
     fun equalBesidesAmount(other: Item<*>): Boolean{
-        if(this.type != other.type)
+        if(this.type != other.type) {
             return false
-        if(this.modifiers != other.modifiers)
+        }
+        if(!this.getModifiersCopy().equals(other.getModifiersCopy())) {
             return false
+        }
         return true
     }
 

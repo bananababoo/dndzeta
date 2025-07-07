@@ -1,11 +1,9 @@
 package org.banana_inc.extensions
 
-import net.kyori.adventure.extra.kotlin.plus
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.event.ClickEvent
 import net.kyori.adventure.text.minimessage.MiniMessage
 import org.apache.maven.artifact.versioning.ComparableVersion
-import org.banana_inc.logger
 import org.banana_inc.util.ContextResolver
 import org.bukkit.Bukkit
 import org.bukkit.Location
@@ -27,13 +25,8 @@ val String.component get(): Component {
     return message
 }
 
-operator fun Component.plus(string: String): Component{
-    return this.plus(string.component)
-}
-
 fun String.clickableComponent(onClick: () -> Unit): @NotNull Component {
     val a = this.component.clickEvent(ClickEvent.callback { onClick() })
-    logger.info("makingComponent: $a")
     return a
 }
 

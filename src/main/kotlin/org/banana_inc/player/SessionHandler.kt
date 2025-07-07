@@ -33,9 +33,8 @@ object SessionHandler {
         }
 
         EventManager.addListener<PlayerJoinEvent>{
-            //---Inventory---
             player.inventory.clear()
-            for (item in player.data.inventory.getAllCopy) {
+            for (item in player.data.inventory) {
                 player.inventory.setItem(item.key, item.value.itemStack())
             }
         }

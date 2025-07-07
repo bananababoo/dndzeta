@@ -5,10 +5,13 @@ import com.zorbeytorunoglu.kLib.task.MCDispatcher
 import com.zorbeytorunoglu.kLib.task.Scopes
 import io.papermc.paper.ban.BanListType
 import kotlinx.coroutines.launch
+import net.kyori.adventure.extra.kotlin.join
 import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.JoinConfiguration
 import net.kyori.adventure.text.TextComponent
 import org.banana_inc.data.Data
 import org.banana_inc.data.DatabaseActions
+import org.banana_inc.util.readable
 import org.bukkit.*
 import org.bukkit.block.Block
 import org.bukkit.command.CommandSender
@@ -251,11 +254,10 @@ fun sendError(player: HumanEntity, vararg message: String){
     }
 }
 
-fun sendMessage(player: HumanEntity, vararg message: String){
-    for(m in message){
-        player.sendMessage(m.component)
+fun sendMessage(player: HumanEntity, vararg message: Any){
+    val message = message.toList().stream().map { it.readable }.toList().join(JoinConfiguration.noSeparators())
+        player.sendMessage(message)
     }
-}
 
 fun sendMessage(player: HumanEntity, message: Component){
     player.sendMessage(message)

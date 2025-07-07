@@ -6,7 +6,12 @@ import kotlin.reflect.KClass
  * Set of objects subclassed of abstract class/interface T.
  * No 2 objects in this set will have the same subclassed class of T
  */
-class ClassSet<T : Any>: LinkedHashSet<T>() {
+class ClassSet<T : Any>(existingSet: ClassSet<T>?=null): LinkedHashSet<T>() {
+    init {
+        if(existingSet!= null){
+            addAll(existingSet)
+        }
+    }
 
     val classSet: MutableSet<KClass<out T>> = mutableSetOf<KClass<out T>>()
 
@@ -36,6 +41,9 @@ class ClassSet<T : Any>: LinkedHashSet<T>() {
             classSet.remove(existing)
         }
         classSet.add(existing)
+    }
+    fun copy(): ClassSet<T> {
+        return ClassSet(this)
     }
 
 }

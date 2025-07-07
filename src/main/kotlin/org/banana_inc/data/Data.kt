@@ -89,7 +89,7 @@ sealed class Data{
     open class Inventory(
         val size: Int,
         private val items: MutableMap<Int, Item<*>> = mutableMapOf() ,
-    ){
+    ): Iterable<Map.Entry<Int, Item<*>>> {
         fun clear() = items.clear()
         @JsonIgnore
         operator fun set(slot: Int, item: Item<*>) {
@@ -102,6 +102,8 @@ sealed class Data{
         val getAllCopy = items.toMutableMap()
         fun remove(slot: Int) = items.remove(slot)
         override fun toString() = items.toString()
+        override fun iterator(): Iterator<Map.Entry<Int, Item<*>>> = items.iterator()
+
     }
 }
 
