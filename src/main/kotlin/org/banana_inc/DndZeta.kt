@@ -1,20 +1,33 @@
 package org.banana_inc
 
 import co.aikar.commands.annotation.Dependency
+import com.github.retrooper.packetevents.PacketEvents
 import com.google.gson.Gson
+import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder
 import org.banana_inc.util.reflection.ClassGraph
+import org.bukkit.event.EventHandler
+import org.bukkit.event.player.PlayerLoginEvent
 import org.bukkit.plugin.java.JavaPlugin
 import java.util.logging.Logger
 
+
 open class DndZeta : JavaPlugin() {
 
-    val gson = Gson()
+    override fun onLoad() {
+        setupGlobals()
+        PacketEvents.setAPI(SpigotPacketEventsBuilder.build(plugin))
+        PacketEvents.getAPI().load()
+    }
 
     override fun onEnable() {
-        plugin = this
-        org.banana_inc.logger = plugin.logger
+        PacketEvents.getAPI().init()
         saveDefaultConfig()
         init()
+    }
+
+    fun setupGlobals(){
+        plugin = this
+        org.banana_inc.logger = plugin.logger
     }
 
     fun init(){
@@ -24,14 +37,20 @@ open class DndZeta : JavaPlugin() {
     }
 
     override fun onDisable() {
-        // Plugin shutdown logic
+        PacketEvents.getAPI().terminate()
     }
 
-    fun sum(a: Int, b: Int) = a + b
 }
+
+@EventHandler
+fun onLogin(e: PlayerLoginEvent){
+
+}
+
 
 @Dependency
 lateinit var plugin: DndZeta
 lateinit var logger: Logger
+val gson = Gson()
 
 

@@ -8,7 +8,7 @@ import org.banana_inc.item.ItemMaterial
 import org.banana_inc.item.attributes.Currency
 import org.banana_inc.item.attributes.Weight
 import org.banana_inc.item.attributes.weapon.*
-import org.banana_inc.util.dnd.*
+import org.banana_inc.mechanics.dice.*
 
 
 interface Magical: ItemData.Category
@@ -16,9 +16,7 @@ interface Magical: ItemData.Category
 sealed class Weapon(
     cost: Currency,
     weight: Weight,
-    val damageDice: Dice.Damage,
-    val weaponProperties: Set<WeaponProperty>,
-    val weaponMastery: WeaponMastery,
+    val weaponData: WeaponData,
     val combatType: CombatType,
     val weaponProficiency: WeaponProficiency
 ): ItemData(cost,weight){
@@ -26,9 +24,9 @@ sealed class Weapon(
     override val stackSize = 1
     override val itemType = ItemMaterial.WEAPON
 
-    sealed class Melee(cost: Currency, weight: Weight, damageDice: Dice.Damage, properties: Set<WeaponProperty>, weaponMastery: WeaponMastery, weaponProficiency: WeaponProficiency): Weapon(cost, weight, damageDice, properties, weaponMastery,
+    sealed class Melee(cost: Currency, weight: Weight, weaponData: WeaponData, weaponProficiency: WeaponProficiency): Weapon(cost, weight, weaponData,
         CombatType.MELEE, weaponProficiency) {
-        sealed class Simple(cost: Currency, weight: Weight, damageDice: Dice.Damage, weaponMastery: WeaponMastery, vararg properties: WeaponProperty) : Melee(cost,weight, damageDice, properties.toHashSet(), weaponMastery,
+        sealed class Simple(cost: Currency, weight: Weight, damageDice: Dice.Damage, weaponMastery: WeaponMastery, vararg properties: WeaponProperty) : Melee(cost,weight, WeaponData(damageDice, weaponMastery, *properties),
             WeaponProficiency.SIMPLE
         ) {
             data object Club : Simple(1.SP, 2.lb,
@@ -87,7 +85,7 @@ sealed class Weapon(
         sealed class Martial(
             cost: Currency, weight: Weight, damageDice: Dice.Damage, weaponMastery: WeaponMastery,
             vararg properties: WeaponProperty
-        ) : Melee(cost, weight, damageDice, properties.toHashSet(), weaponMastery, WeaponProficiency.MARTIAL) {
+        ) : Melee(cost, weight, WeaponData(damageDice, weaponMastery, *properties), WeaponProficiency.MARTIAL) {
 
             data object Battleaxe : Martial(10.GP, 4.lb,
                 Dice.Damage(d8 to DamageType.SLASHING),
@@ -193,15 +191,14 @@ sealed class Weapon(
     }
 
     sealed class Ranged(
-        cost: Currency, weight: Weight, damageDice: Dice.Damage, properties: Set<WeaponProperty>,
-        weaponMastery: WeaponMastery, weaponProficiency: WeaponProficiency
-    ) : Weapon(cost, weight, damageDice, properties, weaponMastery, CombatType.RANGED, weaponProficiency) {
+        cost: Currency, weight: Weight, weaponData: WeaponData, weaponProficiency: WeaponProficiency
+    ) : Weapon(cost, weight, weaponData, CombatType.RANGED, weaponProficiency) {
 
         sealed class Simple(
             cost: Currency, weight: Weight, damageDice: Dice.Damage, weaponMastery: WeaponMastery,
             vararg properties: WeaponProperty,
             override val itemType: ItemMaterial = ItemMaterial.CROSSBOW
-        ) : Ranged(cost, weight, damageDice, properties.toHashSet(), weaponMastery, WeaponProficiency.SIMPLE) {
+        ) : Ranged(cost, weight, WeaponData(damageDice,  weaponMastery, *properties),WeaponProficiency.SIMPLE) {
 
             data object Dart : Simple(5.CP, 0.25.lb,
                 Dice.Damage(d4 to DamageType.PIERCING),
@@ -241,11 +238,11 @@ sealed class Weapon(
         sealed class Martial(
             cost: Currency, weight: Weight, damageDice: Dice.Damage, weaponMastery: WeaponMastery,
             vararg properties: WeaponProperty, override val itemType: ItemMaterial = ItemMaterial.CROSSBOW
-        ): Ranged(cost, weight, damageDice, properties.toHashSet(), weaponMastery, WeaponProficiency.MARTIAL) {
+        ): Ranged(cost, weight, WeaponData(damageDice, weaponMastery, *properties), WeaponProficiency.MARTIAL) {
 
             sealed class Gun(cost: Currency, weight: Weight, damageDice: Dice.Damage, weaponMastery: WeaponMastery,
                              vararg properties: WeaponProperty, override val itemType: ItemMaterial = ItemMaterial.GUN
-            ): Martial(cost, weight, damageDice, weaponMastery, *properties,itemType= ItemMaterial.GUN){
+            ): Martial(cost, weight, damageDice, weaponMastery, *properties, itemType= ItemMaterial.GUN){
 
                 data object Blowgun : Gun(10.GP, 1.lb,
                     Dice.Damage(Dice(Dice.Sides.ONE) to DamageType.PIERCING),

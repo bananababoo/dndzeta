@@ -1,12 +1,18 @@
-the rest of the items
+action selector:
+- circular selector
+- lock item slots
+- press q to drop, then select specific action
+- maybe square display once it gets past like 9 actions or something
 
-    item dynamics
-    - test test test
+battle system selector:
+- highlight location w/ particles that go up
+
+the rest of the items
     - bag support
 
     bags: crossbow bolt case, sack, map or scroll case, component pouch???
     - just bundles, that's it
-    - optionally has a itemtype, only items of that type/category can go in
+    - optionally has a itemtype, only items of that type/category c                                     an go in
     - see if you can do math and stuff to make it carry only 30 lb (change stack amount dynamically?), otherwise backpack physical item
     backpacks:
     -
@@ -24,8 +30,6 @@ item textures
 attribute modifier / editor
 
 resource pack custom icon / font system for icons
-
-orthogonal battle system https://discord.com/channels/@me/1031875337409273887/1321873059354771548
 
 add music
 

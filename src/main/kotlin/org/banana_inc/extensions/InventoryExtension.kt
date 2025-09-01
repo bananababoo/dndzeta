@@ -2,8 +2,8 @@ package org.banana_inc.extensions
 
 import com.zorbeytorunoglu.kLib.task.nextTick
 import org.banana_inc.data.Data
-import org.banana_inc.debug.DebugType
-import org.banana_inc.debug.sendDebugMessage
+import org.banana_inc.util.debug.DebugType
+import org.banana_inc.util.debug.sendDebugMessage
 import org.banana_inc.item.Item
 import org.banana_inc.logger
 import org.banana_inc.plugin

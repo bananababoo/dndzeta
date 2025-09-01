@@ -32,6 +32,7 @@ data class Storage(val boxes: HashMap<StorageToken<out Any>, Any> = HashMap()) {
     inline operator fun <reified T: Any> get(key: String): T? {
         return get(StorageToken(key)) as? T
     }
+
     inline fun <reified T: Any> putIfAbsent(key: String, value: T){
         if(get<T>(key) == null) set(key,value)
     }

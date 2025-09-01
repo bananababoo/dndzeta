@@ -10,7 +10,8 @@ import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.JoinConfiguration
 import net.kyori.adventure.text.TextComponent
 import org.banana_inc.data.Data
-import org.banana_inc.data.DatabaseActions
+import org.banana_inc.data.PlayerData
+import org.banana_inc.data.database.DatabaseActions
 import org.banana_inc.util.readable
 import org.bukkit.*
 import org.bukkit.block.Block
@@ -264,10 +265,10 @@ fun sendMessage(player: HumanEntity, message: Component){
 }
 
 
-val HumanEntity.data: Data.Player
+val HumanEntity.data: PlayerData
     get() {
-        val playerData = Data.get<Data.Player>(uniqueId)
-        return playerData ?: Data.Player(uniqueId).apply { DatabaseActions.store(this) }
+        val playerData = Data.get<PlayerData>(uniqueId)
+        return playerData ?: PlayerData(uniqueId).apply { DatabaseActions.store(this) }
     }
 
 

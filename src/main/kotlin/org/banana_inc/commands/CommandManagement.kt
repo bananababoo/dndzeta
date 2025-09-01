@@ -2,7 +2,7 @@ package org.banana_inc.commands
 
 import co.aikar.commands.BaseCommand
 import co.aikar.commands.PaperCommandManager
-import org.banana_inc.data.Data
+import org.banana_inc.data.PlayerData
 import org.banana_inc.extensions.data
 import org.banana_inc.extensions.getFirstClassTypeArgument
 import org.banana_inc.extensions.hasItemInHand
@@ -21,7 +21,7 @@ object CommandManagement{
     private var manager: PaperCommandManager = PaperCommandManager(plugin)
 
     init {
-        manager.commandContexts.registerContext(Data.Player::class.java){
+        manager.commandContexts.registerContext(PlayerData::class.java){
             it.player.data
         }
 

@@ -3,7 +3,7 @@ package org.banana_inc.item
 import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.TextDecoration
-import org.banana_inc.data.Database
+import org.banana_inc.data.database.Database
 import org.banana_inc.extensions.capitalizeFirstLetter
 import org.banana_inc.extensions.component
 import org.banana_inc.extensions.times
@@ -67,7 +67,7 @@ object ItemStackCreator {
         return mutableListOf<Component>().apply {
             when(itemData) {
                 is Weapon -> {
-                    add("Damage: ${itemData.damageDice}".component)
+                    add("Damage: ${itemData.weaponData.damageDice}".component)
                 } else -> Unit
             }
 

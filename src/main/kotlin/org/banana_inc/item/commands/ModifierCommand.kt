@@ -4,14 +4,15 @@ import co.aikar.commands.BaseCommand
 import co.aikar.commands.annotation.CommandAlias
 import co.aikar.commands.annotation.CommandCompletion
 import co.aikar.commands.annotation.Subcommand
-import org.banana_inc.EventManager
-import org.banana_inc.EventManager.chatCallback
+import org.banana_inc.EventManager.HandlerRemover
 import org.banana_inc.chat.ComplexTypedMultiLineEditor
 import org.banana_inc.chat.MultiLineEditor
 import org.banana_inc.extensions.*
 import org.banana_inc.item.Item
 import org.banana_inc.item.Modifier
 import org.banana_inc.item.MultiModifier
+import org.banana_inc.on
+import org.banana_inc.onChat
 import org.banana_inc.util.readable
 import org.banana_inc.util.reflection.ClassGraph
 import org.bukkit.entity.Player
@@ -62,7 +63,7 @@ object ModifierCommand: BaseCommand() {
 
     class ModifierChatHandler(val player: Player, val slot: Int) {
 
-        private lateinit var lockSlot: List<EventManager.Removable>
+        private lateinit var lockSlot: List<HandlerRemover>
 
         fun startModifierChat(modifierClazz: KClass<out Modifier<*>>, player: Player, item: Item<*>, inventory: Inventory) {
             sendMessage(player, "Added modifier ", modifierClazz)
@@ -130,7 +131,7 @@ object ModifierCommand: BaseCommand() {
                 sendMessage(
                     player,
                     "<gray>Input a <aqua>${parameter.name}<gray> of type <gold>".component.append(parameterClass.readable))
-                player.chatCallback(parameterClass) {
+                player.onChat(parameterClass) {
                     args.add(it)
                     parameterIndex += 1
                     parameterValueAsker()
@@ -139,19 +140,19 @@ object ModifierCommand: BaseCommand() {
             parameterValueAsker()
         }
 
-        private fun setupSlotLock(): MutableList<EventManager.Removable> {
-            val events: MutableList<EventManager.Removable> = mutableListOf()
-            events.add(EventManager.addRemovableListener<InventoryClickEvent> {
+        private fun setupSlotLock(): MutableList<HandlerRemover> {
+            val events: MutableList<HandlerRemover> = mutableListOf()
+            events.add(on<InventoryClickEvent> {
                 if (this@ModifierChatHandler.player.inventory == this.clickedInventory && slot == this@ModifierChatHandler.slot) {
                     isCancelled = true
                 }
             })
-            events.add(EventManager.addRemovableListener<InventoryDragEvent> {
+            events.add(on<InventoryDragEvent> {
                 if (this@ModifierChatHandler.player.inventory == this.inventory && inventorySlots.contains(this@ModifierChatHandler.slot)) {
                     isCancelled = true
                 }
             })
-            events.add(EventManager.addRemovableListener<PlayerDropItemEvent> {
+            events.add(on<PlayerDropItemEvent> {
                 if (this@ModifierChatHandler.player == this.player && slot == player.inventory.heldItemSlot) {
                     isCancelled = true
                 }

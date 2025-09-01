@@ -1,15 +1,15 @@
 package org.banana_inc.gui.base
 
-import org.banana_inc.data.Data
+import org.banana_inc.data.PlayerData
 
-abstract class GUI(val player: Data.Player) {
+abstract class GUI(val playerData: PlayerData) {
 
     init {
-        player.localData.inGUI = true
+        playerData.localData.inGUI = true
     }
 
     fun onClose(){
-        player.localData.inGUI = false
+        playerData.localData.inGUI = false
     }
 
 }

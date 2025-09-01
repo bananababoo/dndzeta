@@ -14,8 +14,9 @@ import org.banana_inc.logger
 import org.bukkit.inventory.ItemStack
 
 @JsonTypeInfo(
-    use = JsonTypeInfo.Id.MINIMAL_CLASS,      // Use a logical name for the type
-    include = JsonTypeInfo.As.WRAPPER_OBJECT, // Embed as a property within the object
+    use = JsonTypeInfo.Id.MINIMAL_CLASS,
+    include = JsonTypeInfo.As.PROPERTY,
+    property = "@class"
 )
 abstract class Modifier<out T: ItemData>()  {
     open fun modifyBase(item: ItemStack) {}

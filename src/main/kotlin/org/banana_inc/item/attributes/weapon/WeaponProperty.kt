@@ -1,6 +1,6 @@
 package org.banana_inc.item.attributes.weapon
 
-import org.banana_inc.util.dnd.Dice
+import org.banana_inc.mechanics.dice.Dice
 
 sealed class WeaponProperty(val weaponPropertyType: WeaponPropertyType) {
     class Ammunition(val range: WeaponRange, val ammunition: org.banana_inc.item.items.Ammunition): WeaponProperty(WeaponPropertyType.AMMUNITION)

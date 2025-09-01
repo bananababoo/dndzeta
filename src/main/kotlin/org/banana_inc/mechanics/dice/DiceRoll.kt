@@ -3,7 +3,6 @@ package org.banana_inc.mechanics.dice
 import org.banana_inc.extensions.findNextSolidBlock
 import org.banana_inc.extensions.relativeOffset
 import org.banana_inc.logger
-import org.banana_inc.util.dnd.Dice
 import org.bukkit.Location
 import org.bukkit.block.BlockFace
 import org.bukkit.entity.LivingEntity

@@ -8,35 +8,44 @@ import co.aikar.commands.annotation.Default
 import co.aikar.commands.annotation.Subcommand
 import com.destroystokyo.paper.ParticleBuilder
 import com.fasterxml.jackson.module.kotlin.readValue
+import com.github.retrooper.packetevents.protocol.item.type.ItemTypes
+import com.github.retrooper.packetevents.protocol.world.states.type.StateTypes
 import com.zorbeytorunoglu.kLib.task.CancelableTask
 import com.zorbeytorunoglu.kLib.task.Repeat
 import io.papermc.paper.event.player.AsyncChatEvent
-import org.banana_inc.EventManager
 import org.banana_inc.chat.ComplexTypedMultiLineEditor
 import org.banana_inc.chat.MultiLineEditor
 import org.banana_inc.config.ServerConfig
-import org.banana_inc.data.Database
-import org.banana_inc.data.DatabaseActions
+import org.banana_inc.data.database.Database
+import org.banana_inc.data.database.DatabaseActions
 import org.banana_inc.extensions.data
-import org.banana_inc.extensions.radiusAsyncCached
 import org.banana_inc.extensions.relativeOffset
 import org.banana_inc.extensions.sendMessage
+import org.banana_inc.extensions.showToPlayers
 import org.banana_inc.item.Enchantment
 import org.banana_inc.item.EnchantmentModifier
 import org.banana_inc.item.Modifier
 import org.banana_inc.item.items.Weapon
 import org.banana_inc.item.items.Weapon.Melee.Martial.Halberd.create
 import org.banana_inc.logger
-import org.banana_inc.mechanics.battle.grid.BattleGrid
+import org.banana_inc.mechanics.actionSelector.ActionSelector
+import org.banana_inc.mechanics.battle.visual.SelectionBox
+import org.banana_inc.mechanics.classes.classes.barbarian.Barbarian
+import org.banana_inc.mechanics.dice.Dice
 import org.banana_inc.mechanics.dice.DiceRoll
+import org.banana_inc.on
+import org.banana_inc.player.PlayerStateTokens
+import org.banana_inc.plugin
 import org.banana_inc.util.ContextResolver
-import org.banana_inc.util.dnd.Dice
 import org.banana_inc.util.storage.StorageToken
 import org.banana_inc.util.storage.tempStorage
+import org.bukkit.Bukkit
 import org.bukkit.Color
+import org.bukkit.Location
 import org.bukkit.Particle
 import org.bukkit.Particle.DustOptions
 import org.bukkit.entity.Player
+import java.util.concurrent.TimeUnit
 import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.time.Duration.Companion.seconds
@@ -51,11 +60,16 @@ object Command: BaseCommand() {
     fun testCommand(player: Player, x: Float, y: Float) {
         val builder = ParticleBuilder(Particle.DUST).data(DustOptions(Color.GRAY, 1f)).count(10)
         Repeat.Async(duration = 10.seconds) {
-            val offset = player.eyeLocation.relativeOffset(cos(it.getRadians()) * x, sin(it.getRadians()) * y, 1.0)
-            builder.location(offset).radiusAsyncCached(10,20).spawn()
+            val offset: Location = player.eyeLocation.relativeOffset(cos(it.getRadians()) * x, sin(it.getRadians()) * y, 1.0)
+            builder.location(offset).showToPlayers(10,20).spawn()
         }.apply {
             player.tempStorage["CMD-test-task"] = this.task
         }
+    }
+
+    @Subcommand("addBarbarian")
+    fun addBarbarian(player: Player) {
+        player.data.addClass(Barbarian())
     }
 
     @Subcommand("cancel")
@@ -63,24 +77,31 @@ object Command: BaseCommand() {
         sendMessage(player, "hello")
     }
 
-    @Subcommand("grid")
-    fun gridCommand(player: Player) {
-        BattleGrid(player)
+    @Subcommand("ray")
+    fun rayCommand(player: Player, enabled: Boolean) {
+        if(enabled) {
+            val ray = SelectionBox.makeBox(player, StateTypes.WHITE_STAINED_GLASS)
+            player.tempStorage[PlayerStateTokens.Battle.LISTEN_FOR_RAY] = Bukkit.getAsyncScheduler()
+                .runAtFixedRate(plugin, {
+                    SelectionBox.updateBox(player, ray)
+                }, 0, 50,  TimeUnit.MILLISECONDS)
+        }else{
+            player.tempStorage[PlayerStateTokens.Battle.LISTEN_FOR_RAY]?.cancel()
+        }
     }
 
-    @Subcommand("stopGrid")
-    fun stopGridCommand(player: Player) {
-        player.tempStorage[BattleGrid.storageToken]?.remove()
+    @Subcommand("selector")
+    fun selectorCommand(player: Player) {
+        ActionSelector.start(player, ItemTypes.STONE_PICKAXE,
+            ItemTypes.GOLD_INGOT, ItemTypes.GOLD_INGOT, ItemTypes.GOLD_INGOT, ItemTypes.GOLD_INGOT ,ItemTypes.GOLD_INGOT ,ItemTypes.GOLD_INGOT , ItemTypes.STONE_PICKAXE){
+            player.sendMessage("yo you picked item: $it")
+        }
     }
 
     @Subcommand("registerChatEvent")
     fun registerTest(player: Player, args: String ) {
         player.sendMessage("registered event: $args")
-        EventManager.addListener<AsyncChatEvent>{ player.sendMessage(args) }
-    }
-    @Subcommand("money")
-    fun money(player: Player, amount: Long ) {
-        player.data.money = amount
+        on<AsyncChatEvent>{ player.sendMessage(args) }
     }
 
     @Subcommand("savePlayer")
@@ -138,9 +159,8 @@ object Command: BaseCommand() {
             val i = p.data.inventory[0] ?: error("item not found")
             sendMessage(p,"id: ${i.type.name}")
             if (i.type is Weapon.Ranged) {
-                sendMessage(p, i.type.damageDice.toString())
+                sendMessage(p, i.type.weaponData.toString())
             }
-
         }
     }
 

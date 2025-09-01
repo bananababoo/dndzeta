@@ -2,6 +2,9 @@ package org.banana_inc
 
 import io.papermc.paper.event.player.AsyncChatEvent
 import net.kyori.adventure.text.TextComponent
+import org.banana_inc.EventManager.HandlerRemover
+import org.banana_inc.EventManager.addHandler
+import org.banana_inc.EventManager.removeHandler
 import org.banana_inc.extensions.resolve
 import org.banana_inc.extensions.sendError
 import org.banana_inc.util.reflection.ClassGraph
@@ -11,7 +14,9 @@ import org.bukkit.event.Event
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerAdvancementDoneEvent
+import org.bukkit.event.player.PlayerEvent
 import org.bukkit.event.player.PlayerLoginEvent
+import org.bukkit.event.player.PlayerQuitEvent
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.reflect.KClass
@@ -25,96 +30,112 @@ object EventManager: Listener {
         PlayerLoginEvent::class,
         PlayerAdvancementDoneEvent::class //temp until further system made
     ).filter { it.java.isAssignableFrom(Cancellable::class.java) }  // Filter only Cancellable events
-    .toSet()
+        .toSet()
+
     init {
         val pm = plugin.server.pluginManager
         for(i in ClassGraph.allBukkitEventClasses){
             pm.registerEvent(i,this, EventPriority.HIGH, { _, event ->
                 if(!i.isInstance(event)) return@registerEvent
-                if (event is Cancellable && canceledEvents.contains(event::class))
-                    event.isCancelled = true
+                if (event is Cancellable && canceledEvents.contains(event::class)) event.isCancelled = true
                 handleEvent(event)
             }, plugin)
         }
     }
 
-
-    /**
-     * returns a reference to itself
-     */
-    inline fun <reified T : Event> addListenerWithSelfReference(noinline action: (T, (Event) -> Unit) -> Unit) {
-        lateinit var reference: (Event) -> Unit
-        reference = { event ->
-            action(event as T, reference)
-        }
-        events.compute(T::class) { _, existingActions ->
-            (existingActions ?: ArrayDeque()).apply { addFirst(reference) }
-        }
-    }
-
-    inline fun <reified T : Event> addListener(noinline action: T.() -> Unit) {
-        events.compute(T::class) { _, existingActions ->
-            (existingActions ?: ArrayDeque()).apply { addFirst{ action(it as T) } }
-        }
-    }
-
-    inline fun <reified T : Event> addRemovableListener(noinline action: T.() -> Unit): Removable{
-        val reference: (Event) -> Unit = { action(it as T) }
-        events.compute(T::class) { _, existingActions ->
-            (existingActions ?: ArrayDeque()).apply { addFirst(reference) }
-        }
-        logger.info("added removeable listener $events")
-        return Removable {
-            logger.info("removing removeable listener $events")
-            events[T::class]!!.remove(reference)
-        }
-    }
-
-
-    inline fun <reified T : Event> callback(crossinline action: (T) -> Unit) {
-        callback<T>({ true },action)
-    }
-
-    inline fun <reified T : Event> callback(crossinline filter: (T) -> Boolean, crossinline action: (T) -> Unit) {
-        val callback: (T,(Event) -> Unit) -> Unit = { it, reference ->
-            if(filter(it)) {
-                action(it)
-                logger.info(events[T::class]!!.remove(reference).toString())
-            }
-        }
-        addListenerWithSelfReference<T>(callback)
-    }
-
-    inline fun <reified T : Any> Player.chatCallback(noinline action: (T) -> Unit ){
-        chatCallback(T::class, action)
-    }
-
-    fun <T : Any> Player.chatCallback(type: KClass<T>, action: (T) -> Unit ){
-        callback<AsyncChatEvent> ({ it.player == this }){
-            it.isCancelled = true
-            val content = (it.message() as TextComponent).content()
-            try{
-                action(content.resolve(type))
-            }catch (e: IllegalStateException){
-                sendError(this, "123 ${e.message} Invalid type! Try again and make sure its a ${type.simpleName}")
-                chatCallback(type,action)
-            }
-        }
-    }
-
     private fun handleEvent(event: Event) {
-        val handlers = events[event::class]
-        if(handlers == null) return
-        for (handler in handlers) {
-            if(event is Cancellable && event.isCancelled) return
+        if (event is Cancellable && event::class in canceledEvents) {
+            event.isCancelled = true
+        }
+        events[event::class]?.toList()?.forEach { handler ->
             handler(event)
         }
     }
 
-    class Removable(private val removeFunction: () -> Unit){
-        fun remove(){
-            this.removeFunction()
+
+
+    @PublishedApi
+    internal fun addHandler(eventClass: KClass<out Event>, handler: EventHandler): HandlerRemover {
+        events.compute(eventClass) { _, handlers ->
+            (handlers ?: ArrayDeque()).apply { addFirst(handler) }
         }
+        return HandlerRemover { removeHandler(eventClass, handler) }
+    }
+
+    @PublishedApi
+    internal fun removeHandler(eventClass: KClass<out Event>, handler: EventHandler) {
+        events[eventClass]?.remove(handler)
+    }
+
+    fun interface HandlerRemover {
+        fun remove()
     }
 
 }
+
+inline fun <reified T : Event> on(noinline action: T.() -> Unit) = addHandler(T::class) { action(it as T) }
+
+inline fun <reified T : Event> once(
+    crossinline filter: (T) -> Boolean,
+    crossinline action: T.() -> Unit
+): HandlerRemover {
+    lateinit var handler: EventHandler
+    handler = {
+        (it as T).takeIf(filter)?.let { event ->
+            action(event)
+            removeHandler(T::class, handler)
+        }
+    }
+    return addHandler(T::class,handler)
+}
+
+inline fun <reified T : Event> once(crossinline action: (T) -> Unit) = once({ true }, action)
+
+inline fun <reified T : PlayerEvent> onPlayer(
+    player: Player,
+    noinline action: T.() -> Unit
+): HandlerRemover {
+    val handler = on<T> { if (this.player == player) action(this) }
+
+    if (T::class != PlayerQuitEvent::class) {
+        once<PlayerQuitEvent>({  it.player == player }) { handler.remove() }
+    }
+
+    return handler
+}
+
+inline fun <reified T : PlayerEvent> oncePlayer(
+    player: Player,
+    crossinline filter: T.() -> Boolean,
+    crossinline action: T.() -> Unit
+): HandlerRemover {
+    lateinit var handler: HandlerRemover
+    handler = onPlayer<T>(player) {
+        if (filter(this)) {
+            action(this)
+            handler.remove()
+        }
+    }
+    return handler
+}
+
+inline fun <reified T : PlayerEvent> oncePlayer(player: Player, crossinline action: T.() -> Unit): HandlerRemover{
+    return oncePlayer<T>(player, {true}, action)
+}
+
+inline fun <reified T : Any> Player.onChat(noinline action: (T) -> Unit) = onChat(T::class, action)
+
+fun <T : Any> Player.onChat(type: KClass<T>, action: (T) -> Unit) {
+    oncePlayer<AsyncChatEvent>(this) {
+        isCancelled = true
+        val content = (message() as TextComponent).content()
+        runCatching { action(content.resolve(type)) }
+            .onFailure {
+                sendError(player, "Invalid input! Expected: ${type.simpleName}")
+                onChat(type, action)
+        }
+    }
+}
+
+private typealias EventHandler = (Event) -> Unit
+

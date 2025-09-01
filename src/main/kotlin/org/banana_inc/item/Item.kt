@@ -19,8 +19,7 @@ data class Item<T: ItemData> @JsonIgnore constructor(
     val type: T,
     private var modifiers: ClassSet<Modifier<T>> = ClassSet(),
     @JsonProperty("amount")
-    private var _amount: Int = 1,
-
+    private var _amount: Int = 1
 ){
     var amount: Int
         get() = _amount

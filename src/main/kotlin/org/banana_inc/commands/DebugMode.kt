@@ -3,8 +3,8 @@ package org.banana_inc.commands
 import co.aikar.commands.BaseCommand
 import co.aikar.commands.annotation.CommandAlias
 import co.aikar.commands.annotation.Subcommand
-import org.banana_inc.debug.Debug
-import org.banana_inc.debug.DebugType
+import org.banana_inc.util.debug.Debug
+import org.banana_inc.util.debug.DebugType
 import org.banana_inc.extensions.sendMessage
 import org.banana_inc.util.storage.tempStorage
 import org.bukkit.entity.Player

@@ -51,34 +51,6 @@ fun Location.strikeLightningEffect() {
     world.strikeLightningEffect(this)
 }
 
-/**
- * Creates an explosion with the given power in the location.
- * @param power Power of the explosion
- */
-fun Location.createExplosion(power: Float) {
-    world.createExplosion(this, power)
-}
-
-/**
- * Creates an explosion with the given power and an option to enable or disable the fire
- * that will be caused by the explosion.
- * @param power Power float
- * @param fire Should cause fire
- */
-fun Location.createExplosion(power: Float, fire: Boolean) {
-    world.createExplosion(this, power, fire)
-}
-
-/**
- * Creates an explosion with the given power and the option to enable or disable the fire
- * that will be caused by the explosion and option to enable or disable the block break.
- * @param power Power float
- * @param fire Should cause fire boolean
- * @param breakBlocks Should break blocks boolean
- */
-fun Location.createExplosion(power: Float, fire: Boolean, breakBlocks: Boolean) {
-    world.createExplosion(this.x, this.y, this.z, power, fire, breakBlocks)
-}
 
 /**
  * Creates an explosion without causing halt in server with the given power and an option to
@@ -157,19 +129,6 @@ fun Location.toLegibleString(): String =
     "${this.world.name};${this.x};${this.y};${this.z};${this.yaw};${this.pitch}"
 
 /**
- * Converts a legible Location String to Location.
- * @return Location
- */
-fun Location.fromLegibleString(string: String): Location {
-
-    val args: List<String> = string.split(";")
-
-    return Location(Bukkit.getWorld(args[0]),args[1].toDouble(),args[2].toDouble(),args[3].toDouble(),
-        args[4].toFloat(), args[5].toFloat())
-
-}
-
-/**
  * Calculates a new location by applying an offset relative to the current direction of the location.
  * This function allows for movement along the x, y, and z axes, where:
  *
@@ -189,7 +148,7 @@ fun Location.relativeOffset(x: Double = 0.0, y: Double = 0.0, z: Double = 0.0): 
     return this.add(direction.multiply(z)).add(upward.multiply(y)).add(right.multiply(x))
 }
 
-fun Location.asyncNearbyPlayers(radius: Long): List<Player> {
+fun Location.getNearbyPlayers(radius: Long): List<Player> {
     val radiusSquared = radius * radius
     val list = mutableListOf<Player>()
     for (player in Bukkit.getOnlinePlayers()) {

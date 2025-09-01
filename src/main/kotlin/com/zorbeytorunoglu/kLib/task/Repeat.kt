@@ -47,7 +47,6 @@ abstract class Repeat(
                         delay(period)
                     }
                 }
-
             }
         )
 

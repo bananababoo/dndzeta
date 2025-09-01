@@ -176,6 +176,7 @@ fun String.fromLegibleString(): Location {
 inline fun <reified T : Any> String.resolve(): T {
     return ContextResolver.resolve<T>(this)
 }
+
 fun <T : Any> String.resolve(type: KClass<T>): T {
     return ContextResolver.resolve(this,type)
 }

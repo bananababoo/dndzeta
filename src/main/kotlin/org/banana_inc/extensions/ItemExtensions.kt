@@ -2,7 +2,7 @@ package org.banana_inc.extensions
 
 import com.fasterxml.jackson.module.kotlin.readValue
 import net.kyori.adventure.text.Component
-import org.banana_inc.data.Database
+import org.banana_inc.data.database.Database
 import org.banana_inc.item.Item
 import org.banana_inc.item.ItemStackCreator
 import org.banana_inc.item.Modifier

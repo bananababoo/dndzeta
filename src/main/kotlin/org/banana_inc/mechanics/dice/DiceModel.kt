@@ -4,9 +4,8 @@ import com.zorbeytorunoglu.kLib.task.Scopes
 import com.zorbeytorunoglu.kLib.task.sync
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import org.banana_inc.model.ActiveModel
+import org.banana_inc.visuals.model.ActiveModel
 import org.banana_inc.plugin
-import org.banana_inc.util.dnd.Dice
 import org.bukkit.Location
 import kotlin.time.Duration.Companion.seconds
 

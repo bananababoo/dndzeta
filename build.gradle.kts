@@ -38,9 +38,13 @@ dependencies {
     //gui library
     implementation(libs.invui)
     implementation(libs.invui.kotlin)
+    //packet events
+    implementation(libs.packetevents)
     //resource pack
     implementation(libs.creative.api)
     implementation(libs.creative.serializer)
+    //fleks
+    //implementation(libs.fleks)
 
     testImplementation(kotlin("test"))
 }
