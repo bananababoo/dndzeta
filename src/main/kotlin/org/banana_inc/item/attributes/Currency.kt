@@ -33,11 +33,11 @@ class Currency(amount: Long) {
         val strings = mutableListOf<String>()
         for(entry in Type.entries.reversed()){
             if(total < 0 || (total / entry.value).toInt() == 0) continue
-            strings.add("${entry.color} ${total / entry.value} ${entry.symbol}")
+            strings.add("${entry.color}${total / entry.value} ${entry.symbol}")
             total -= (total / entry.value).toInt() * entry.value
         }
         return strings.joinToString(separator = " ", postfix = "<reset>")
     }
 
-    override fun toString(): String { return textForm}
+    override fun toString(): String { return textForm }
 }

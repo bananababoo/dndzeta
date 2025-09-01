@@ -2,11 +2,11 @@ package org.banana_inc.chat
 
 import net.kyori.adventure.extra.kotlin.plus
 import net.kyori.adventure.text.Component
-import org.banana_inc.EventManager.chatCallback
 import org.banana_inc.extensions.clickableComponent
 import org.banana_inc.extensions.component
 import org.banana_inc.extensions.sendMessage
 import org.banana_inc.logger
+import org.banana_inc.onChat
 import org.banana_inc.util.loop
 import org.banana_inc.util.readable
 import org.bukkit.entity.Player
@@ -26,7 +26,7 @@ class ComplexTypedMultiLineEditor<T : Any>(
             loop(attributes.size,{ backToStart, index ->
                 val attribute = attributes.entries.elementAt(index)
                 sendMessage(player, "Select a ${attribute.value} of type ".component.append(attribute.key.readable))
-                player.chatCallback(attribute.key){
+                player.onChat(attribute.key){
                     params.add(it)
                     backToStart()
                 }
@@ -41,7 +41,7 @@ class ComplexTypedMultiLineEditor<T : Any>(
         property.trySetAccessible()
         "${property.name}: ${property.get(item)} ".clickableComponent {
             sendMessage(player, "Select a ${attribute.value} of type ".component.append(attribute.key.readable))
-            player.chatCallback(attribute.key) {
+            player.onChat(attribute.key) {
                 property.set(item, it)
                 renderEditor()
             }

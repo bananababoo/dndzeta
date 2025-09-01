@@ -1,11 +1,11 @@
 package org.banana_inc.chat
 
 import net.kyori.adventure.extra.kotlin.plus
-import org.banana_inc.EventManager.chatCallback
 import org.banana_inc.extensions.clickableComponent
 import org.banana_inc.extensions.component
 import org.banana_inc.extensions.sendMessage
 import org.banana_inc.logger
+import org.banana_inc.onChat
 import org.banana_inc.util.readable
 import org.bukkit.entity.Player
 import kotlin.reflect.KClass
@@ -30,7 +30,7 @@ open class MultiLineEditor<T : Any>(
     protected open val addButton
         get() = "<green>[+]".clickableComponent {
         sendMessage(player,TYPE_NEW_MESSAGE)
-        player.chatCallback(type){ newItem ->
+        player.onChat(type){ newItem ->
              lines.add(newItem)
             renderEditor()
         }
@@ -46,7 +46,7 @@ open class MultiLineEditor<T : Any>(
     protected open val editButton = { item: T, index: Int ->
         "<gray> $index: <white> ".component.append(item.readable.clickableComponent {
             sendMessage(player,TYPE_NEW_MESSAGE)
-            player.chatCallback(type) { newText: T ->
+            player.onChat(type) { newText: T ->
                 lines.remove(item)
                 lines.add(newText)
                 renderEditor()
