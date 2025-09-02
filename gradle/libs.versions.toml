@@ -2,11 +2,10 @@
 acf = "1.0.0"
 classgraph = "4.8.181"
 creative = "1.7.3"
-fleks = "2.11"
 guava = "33.4.8-jre"
 jackson = "2.20.0"
 kmongo = "5.5.1"
-kotlin = "2.2.20-RC"
+kotlin = "2.2.20-RC2"
 kotlinx = "1.10.2"
 kyori = "4.24.0"
 logback = "1.5.18"
@@ -14,7 +13,7 @@ mockbukkit = "4.72.8"
 mockk = "1.14.5"
 mongodb = "5.6.0-alpha0"
 mongojack = "5.0.3"
-packetevents = "2.9.5-SNAPSHOT"
+packetevents = "2.9.5"
 paper = "1.21.6-R0.1-SNAPSHOT"
 xyz-xenondevs-invui = "2.0.0-alpha.18"
 
@@ -25,7 +24,6 @@ adventure-gson = { module = "net.kyori:adventure-text-serializer-gson", version.
 classgraph = { module = "io.github.classgraph:classgraph", version.ref = "classgraph" }
 creative-api = { module = "team.unnamed:creative-api", version.ref = "creative" }
 creative-serializer = { module = "team.unnamed:creative-serializer-minecraft", version.ref = "creative" }
-fleks = {module = "io.github.quillraven.fleks:Fleks", version.ref = "fleks"}
 guava = { module = "com.google.guava:guava", version.ref = "guava" }
 invui = { module = "xyz.xenondevs.invui:invui", version.ref = "xyz-xenondevs-invui" }
 invui-kotlin = { module = "xyz.xenondevs.invui:invui-kotlin", version.ref = "xyz-xenondevs-invui" }
@@ -42,5 +40,5 @@ mockbukkit = { module = "org.mockbukkit.mockbukkit:mockbukkit-v1.21", version.re
 mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
 mongo-bson = { module = "org.mongodb:bson-kotlinx", version.ref = "mongodb" }
 mongo-jackdriver = { module = "org.mongojack:mongojack", version.ref = "mongojack" }
-packetevents = {module = "com.github.retrooper:packetevents-spigot", version.ref = "packetevents"}
+packetevents = { module = "com.github.retrooper:packetevents-spigot", version.ref = "packetevents" }
 paper-api = { module = "io.papermc.paper:paper-api", version.ref = "paper" }
