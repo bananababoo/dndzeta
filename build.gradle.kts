@@ -43,8 +43,6 @@ dependencies {
     //resource pack
     implementation(libs.creative.api)
     implementation(libs.creative.serializer)
-    //fleks
-    //implementation(libs.fleks)
 
     testImplementation(kotlin("test"))
 }
