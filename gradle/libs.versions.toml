@@ -8,14 +8,14 @@ kmongo = "5.5.1"
 kotlin = "2.2.20"
 kotlinx = "1.10.2"
 kyori = "4.24.0"
-logback = "1.5.18"
+logback = "1.5.19"
 mockbukkit = "4.78.0"
 mockk = "1.14.5"
 mongodb = "5.6.0"
 mongojack = "5.0.3"
 packetevents = "2.9.5"
 paper = "1.21.6-R0.1-SNAPSHOT"
-xyz-xenondevs-invui = "2.0.0-alpha.19"
+xyz-xenondevs-invui = "2.0.0-alpha.20"
 
 [libraries]
 acf-paper = { module = "com.github.bananababoo.acf:acf-paper", version.ref = "acf" }
