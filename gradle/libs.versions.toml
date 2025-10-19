@@ -13,7 +13,7 @@ mockbukkit = "4.86.0"
 mockk = "1.14.6"
 mongodb = "5.6.1"
 mongojack = "5.0.3"
-packetevents = "2.9.5"
+packetevents = "2.10.0"
 paper = "1.21.6-R0.1-SNAPSHOT"
 xyz-xenondevs-invui = "2.0.0-alpha.20"
 
