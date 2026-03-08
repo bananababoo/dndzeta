@@ -15,7 +15,7 @@ mongodb = "5.7.0-beta1"
 mongojack = "5.1.0"
 packetevents = "2.11.2"
 paper = "1.21.6-R0.1-SNAPSHOT"
-xyz-xenondevs-invui = "2.0.0-beta.3"
+xyz-xenondevs-invui = "2.0.0-beta.4"
 
 [libraries]
 acf-paper = { module = "com.github.bananababoo.acf:acf-paper", version.ref = "acf" }
@@ -26,7 +26,7 @@ creative-api = { module = "team.unnamed:creative-api", version.ref = "creative" 
 creative-serializer = { module = "team.unnamed:creative-serializer-minecraft", version.ref = "creative" }
 guava = { module = "com.google.guava:guava", version.ref = "guava" }
 invui = { module = "xyz.xenondevs.invui:invui", version.ref = "xyz-xenondevs-invui" }
-invui-kotlin = { module = "xyz.xenondevs.invui:invui-kotlin", version.ref = "xyz-xenondevs-invui" }
+invui-kotlin = "xyz.xenondevs.invui:invui-kotlin:2.0.0-beta.3"
 jackson = { module = "com.fasterxml.jackson.core:jackson-core", version.ref = "jackson" }
 jackson-kotlin = { module = "com.fasterxml.jackson.module:jackson-module-kotlin", version.ref = "jackson" }
 jackson-yaml = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml", version.ref = "jackson" }
