@@ -14,8 +14,8 @@ mockk = "1.14.9"
 mongodb = "5.7.0-beta1"
 mongojack = "5.1.0"
 packetevents = "2.12.0"
-paper = "26.1.1.build.29-alpha"
-xyz-xenondevs-invui = "2.0.0-RC.1"
+paper = "26.1.2.build.5-alpha"
+xyz-xenondevs-invui = "2.0.0-RC.2"
 
 [libraries]
 acf-paper = { module = "com.github.bananababoo.acf:acf-paper", version.ref = "acf" }
