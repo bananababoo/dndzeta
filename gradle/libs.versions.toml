@@ -6,7 +6,7 @@ guava = "33.6.0-jre"
 jackson = "2.21.2"
 kmongo = "5.6.0"
 kotlin = "2.4.0-Beta1"
-kotlinx = "1.10.2"
+kotlinx = "1.11.0-rc01"
 kyori = "4.26.1"
 logback = "1.5.32"
 mockbukkit = "4.108.0"
@@ -14,13 +14,13 @@ mockk = "1.14.9"
 mongodb = "5.7.0-beta1"
 mongojack = "5.1.0"
 packetevents = "2.12.0"
-paper = "26.1.2.build.5-alpha"
+paper = "26.1.2.build.7-alpha"
 xyz-xenondevs-invui = "2.0.0-RC.2"
 
 [libraries]
 acf-paper = { module = "com.github.bananababoo.acf:acf-paper", version.ref = "acf" }
 adventure-extra-kotlin = { module = "net.kyori:adventure-extra-kotlin", version.ref = "kyori" }
-adventure-gson = { module = "net.kyori:adventure-text-serializer-gson", version.ref = "kyori" }
+adventure-gson = "net.kyori:adventure-text-serializer-gson:5.0.0"
 classgraph = { module = "io.github.classgraph:classgraph", version.ref = "classgraph" }
 creative-api = { module = "team.unnamed:creative-api", version.ref = "creative" }
 creative-serializer = { module = "team.unnamed:creative-serializer-minecraft", version.ref = "creative" }
