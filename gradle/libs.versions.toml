@@ -14,13 +14,13 @@ mockk = "1.14.9"
 mongodb = "5.7.0"
 mongojack = "6.0.0"
 packetevents = "2.12.1"
-paper = "26.1.2.build.62-stable"
+paper = "26.1.2.build.63-stable"
 xyz-xenondevs-invui = "2.1.0"
 
 [libraries]
 acf-paper = { module = "com.github.bananababoo.acf:acf-paper", version.ref = "acf" }
 adventure-extra-kotlin = { module = "net.kyori:adventure-extra-kotlin", version.ref = "kyori" }
-adventure-gson = "net.kyori:adventure-text-serializer-gson:5.0.1"
+adventure-gson = "net.kyori:adventure-text-serializer-gson:5.1.0"
 classgraph = { module = "io.github.classgraph:classgraph", version.ref = "classgraph" }
 creative-api = { module = "team.unnamed:creative-api", version.ref = "creative" }
 creative-serializer = { module = "team.unnamed:creative-serializer-minecraft", version.ref = "creative" }
