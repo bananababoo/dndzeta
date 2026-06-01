@@ -3,7 +3,7 @@ acf = "1.0.0"
 classgraph = "4.8.184"
 creative = "1.7.3"
 guava = "33.6.0-jre"
-jackson = "2.21.4"
+jackson = "2.22.0"
 kmongo = "5.6.0"
 kotlin = "2.4.0-RC2"
 kotlinx = "1.11.0"
@@ -14,7 +14,7 @@ mockk = "1.14.11"
 mongodb = "5.8.0"
 mongojack = "6.0.0"
 packetevents = "2.12.1"
-paper = "26.1.2.build.66-stable"
+paper = "26.1.2.build.67-stable"
 xyz-xenondevs-invui = "2.1.0"
 
 [libraries]
@@ -27,7 +27,7 @@ creative-serializer = { module = "team.unnamed:creative-serializer-minecraft", v
 guava = { module = "com.google.guava:guava", version.ref = "guava" }
 invui = { module = "xyz.xenondevs.invui:invui", version.ref = "xyz-xenondevs-invui" }
 invui-kotlin = { module = "xyz.xenondevs.invui:invui-kotlin", version.ref = "xyz-xenondevs-invui" }
-jackson = { module = "com.fasterxml.jackson.core:jackson-core", version.ref = "jackson" }
+jackson = "com.fasterxml.jackson.core:jackson-core:2.21.4"
 jackson-kotlin = { module = "com.fasterxml.jackson.module:jackson-module-kotlin", version.ref = "jackson" }
 jackson-yaml = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml", version.ref = "jackson" }
 kmongo = { module = "org.litote.kmongo:kmongo", version.ref = "kmongo" }
