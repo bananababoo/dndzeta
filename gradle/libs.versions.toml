@@ -14,7 +14,7 @@ mockk = "1.14.11"
 mongodb = "5.8.0"
 mongojack = "6.0.0"
 packetevents = "2.12.2"
-paper = "26.1.2.build.69-stable"
+paper = "26.2-rc-2.build.5-alpha"
 xyz-xenondevs-invui = "2.1.1"
 
 [libraries]
