@@ -1,11 +1,11 @@
 [versions]
 acf = "1.0.0"
-classgraph = "4.8.194"
+classgraph = "4.8.195"
 creative = "1.7.3"
 guava = "33.7.1-jre"
 jackson = "2.22.2"
 kmongo = "5.6.0"
-kotlin = "2.4.20-RC3"
+kotlin = "2.4.20"
 kotlinx = "1.11.0"
 kyori = "4.26.1"
 logback = "1.6.3"
@@ -15,7 +15,7 @@ mongodb = "5.11.0"
 mongojack = "6.0.0"
 packetevents = "2.13.0"
 paper = "26.3-pre-2.build.0-alpha"
-xyz-xenondevs-invui = "2.3.1"
+xyz-xenondevs-invui = "2.3.2"
 
 [libraries]
 acf-paper = { module = "com.github.bananababoo.acf:acf-paper", version.ref = "acf" }
