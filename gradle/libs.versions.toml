@@ -1,6 +1,6 @@
 [versions]
 acf = "1.0.0"
-classgraph = "4.8.195"
+classgraph = "4.8.196"
 creative = "1.7.3"
 guava = "33.7.1-jre"
 jackson = "2.22.3"
@@ -13,7 +13,7 @@ mockbukkit = "4.116.3"
 mockk = "1.14.11"
 mongodb = "5.12.0"
 mongojack = "6.0.0"
-packetevents = "2.13.0"
+packetevents = "2.14.0"
 paper = "26.3-rc-3.build.1-alpha"
 xyz-xenondevs-invui = "2.5.0"
 
